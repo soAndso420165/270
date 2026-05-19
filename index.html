@@ -7,833 +7,259 @@
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="270 GRIND">
 <title>270 GRIND</title>
+
 <link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
+
 <style>
-  :root {
-    --green: #00ff88;
-    --red: #ff3b3b;
-    --gold: #ffd700;
-    --bg: #0a0a0a;
-    --card: #111111;
-    --border: #222;
-    --text: #f0f0f0;
-    --muted: #555;
-  }
+:root {
+  --green:#00ff88;
+  --red:#ff3b3b;
+  --gold:#ffd700;
+  --bg:#0a0a0a;
+  --card:#111;
+  --border:#222;
+  --text:#f0f0f0;
+  --muted:#555;
+}
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+*{margin:0;padding:0;box-sizing:border-box}
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'Space Mono',monospace;
+}
 
-  /* GRAIN OVERLAY */
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 999;
-    opacity: 0.3;
-  }
+.container{max-width:480px;margin:auto;padding:20px 16px 100px}
 
-  .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
+/* HEADER */
+.header{text-align:center;padding:20px;border-bottom:1px solid var(--border)}
+.header h1{
+  font-family:'Bebas Neue';
+  font-size:60px;
+  background:linear-gradient(90deg,#fff,var(--gold),#fff);
+  -webkit-background-clip:text;
+  -webkit-text-fill-color:transparent;
+}
 
-  /* HEADER */
-  .header {
-    text-align: center;
-    padding: 24px 0 20px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-  }
+.subtitle{font-size:10px;color:var(--muted);letter-spacing:2px}
+.motto{font-size:11px;color:var(--green);margin-top:6px}
 
-  .header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 64px;
-    letter-spacing: 4px;
-    line-height: 1;
-    background: linear-gradient(135deg, #fff 0%, var(--gold) 50%, #fff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+/* CARDS */
+.card{
+  background:var(--card);
+  border:1px solid var(--border);
+  border-radius:12px;
+  padding:14px;
+  margin-top:12px;
+}
 
-  .header .subtitle {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
+.title{
+  font-size:10px;
+  color:var(--muted);
+  letter-spacing:2px;
+  margin-bottom:10px;
+  text-transform:uppercase;
+}
 
-  .motto {
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 1px;
-    margin-top: 10px;
-    font-style: italic;
-  }
+/* TASKS */
+.task{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:8px 0;
+  border-bottom:1px solid var(--border);
+  cursor:pointer;
+  font-size:12px;
+}
 
-  /* STATS ROW */
-  .stats-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+.task:last-child{border-bottom:none}
 
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-  }
+.done{
+  color:var(--muted);
+  text-decoration:line-through;
+}
 
-  .stat-card.full { grid-column: 1 / -1; }
+.check{
+  width:18px;height:18px;
+  border:1px solid var(--muted);
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:10px;
+  border-radius:4px;
+}
 
-  .stat-label {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
+.task.done .check{
+  background:var(--green);
+  border-color:var(--green);
+  color:#000;
+}
 
-  .stat-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 36px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    line-height: 1;
-  }
+/* BUTTON */
+.btn{
+  width:100%;
+  padding:12px;
+  margin-top:10px;
+  border:none;
+  border-radius:10px;
+  background:var(--green);
+  font-weight:700;
+  cursor:pointer;
+}
 
-  .stat-value.green { color: var(--green); }
-  .stat-value.money { font-size: 28px; color: var(--green); }
+/* STATS */
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:10px;
+}
 
-  /* PROGRESS BAR */
-  .progress-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
+.stat{
+  background:var(--card);
+  padding:12px;
+  border-radius:10px;
+  border:1px solid var(--border);
+  text-align:center;
+}
 
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
+.stat h3{font-size:22px;color:var(--gold)}
+.stat p{font-size:9px;color:var(--muted);letter-spacing:2px}
 
-  .progress-label { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
-  .progress-pct { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--gold); }
+/* NAV */
+.nav{
+  position:fixed;
+  bottom:0;
+  left:0;
+  right:0;
+  display:flex;
+  background:#000;
+  border-top:1px solid var(--border);
+}
 
-  .progress-bar {
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
+.nav button{
+  flex:1;
+  padding:12px;
+  background:none;
+  border:none;
+  color:var(--muted);
+  font-size:10px;
+}
 
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--green), var(--gold));
-    border-radius: 3px;
-    transition: width 0.5s ease;
-  }
-
-  /* INCOME SECTION */
-  .income-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .income-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .income-display {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
-    color: var(--green);
-    letter-spacing: 2px;
-    text-align: center;
-    margin-bottom: 12px;
-  }
-
-  .income-input-row {
-    display: flex;
-    gap: 8px;
-  }
-
-  .income-input {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    padding: 10px 12px;
-    outline: none;
-  }
-
-  .income-input:focus { border-color: var(--green); }
-
-  .btn {
-    background: var(--green);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 10px 14px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: opacity 0.2s;
-  }
-
-  .btn:active { opacity: 0.7; }
-  .btn.red { background: var(--red); }
-
-  /* MILESTONES */
-  .milestones {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .milestone-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .milestone {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 11px;
-    cursor: pointer;
-  }
-
-  .milestone:last-child { border-bottom: none; }
-
-  .milestone-check {
-    width: 18px;
-    height: 18px;
-    border: 1px solid var(--muted);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 10px;
-    transition: all 0.2s;
-  }
-
-  .milestone.done .milestone-check {
-    background: var(--green);
-    border-color: var(--green);
-    color: #000;
-  }
-
-  .milestone.done .milestone-text { color: var(--muted); text-decoration: line-through; }
-  .milestone-text { flex: 1; color: var(--text); }
-
-  /* DAY GRID */
-  .days-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .days-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .phase-label {
-    font-size: 8px;
-    background: var(--gold);
-    color: #000;
-    padding: 2px 6px;
-    border-radius: 4px;
-    letter-spacing: 1px;
-  }
-
-  .day-grid {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 4px;
-    margin-bottom: 16px;
-  }
-
-  .day-dot {
-    aspect-ratio: 1;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 6px;
-    color: var(--muted);
-    transition: all 0.15s;
-    position: relative;
-  }
-
-  .day-dot.complete { background: var(--green); border-color: var(--green); }
-  .day-dot.failed { background: var(--red); border-color: var(--red); }
-  .day-dot.today { border-color: var(--gold); box-shadow: 0 0 6px var(--gold); }
-  .day-dot:active { transform: scale(0.85); }
-
-  /* PHASE HEADERS */
-  .phase-header {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    margin: 12px 0 8px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-
-  /* TODAY SECTION */
-  .today-section {
-    background: var(--card);
-    border: 1px solid var(--green);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .today-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--green);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .checklist-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 10px;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    cursor: pointer;
-  }
-
-  .checklist-item:last-child { border-bottom: none; }
-
-  .check-box {
-    width: 20px;
-    height: 20px;
-    border: 1px solid var(--muted);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 11px;
-    margin-top: 1px;
-    transition: all 0.2s;
-  }
-
-  .checklist-item.checked .check-box {
-    background: var(--green);
-    border-color: var(--green);
-    color: #000;
-  }
-
-  .checklist-item.checked .check-label { color: var(--muted); text-decoration: line-through; }
-
-  .check-label { font-size: 12px; line-height: 1.4; }
-
-  .mark-day-btn {
-    width: 100%;
-    padding: 14px;
-    font-size: 13px;
-    letter-spacing: 2px;
-    border-radius: 10px;
-    margin-top: 16px;
-  }
-
-  /* PROJECTIONS */
-  .projections {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .proj-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .proj-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 11px;
-  }
-
-  .proj-row:last-child { border-bottom: none; }
-  .proj-scenario { color: var(--muted); }
-  .proj-amount { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; }
-  .proj-amount.low { color: #888; }
-  .proj-amount.med { color: var(--text); }
-  .proj-amount.high { color: var(--gold); }
-  .proj-amount.vhigh { color: var(--green); }
-
-  /* BOTTOM NAV */
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(10,10,10,0.95);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid var(--border);
-    display: flex;
-    z-index: 100;
-  }
-
-  .nav-btn {
-    flex: 1;
-    padding: 14px 8px;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    transition: color 0.2s;
-  }
-
-  .nav-btn.active { color: var(--gold); }
-  .nav-icon { font-size: 18px; }
-
-  /* VIEWS */
-  .view { display: none; }
-  .view.active { display: block; }
-
-  /* TOAST */
-  .toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--green);
-    color: #000;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 10px 20px;
-    border-radius: 20px;
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 200;
-    white-space: nowrap;
-  }
-
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* STREAK */
-  .streak-fire {
-    font-size: 11px;
-    color: var(--gold);
-    margin-left: 6px;
-  }
+.nav button.active{color:var(--gold)}
+.view{display:none}
+.view.active{display:block}
 </style>
 </head>
+
 <body>
 
 <div class="container">
 
-  <!-- HOME VIEW -->
-  <div class="view active" id="view-home">
+<!-- HOME -->
+<div class="view active" id="home">
 
-    <div class="header">
-      <h1>270 GRIND</h1>
-      <div class="subtitle">FAF Empire · Started May 19, 2026</div>
-      <div class="motto">"No one is gonna save me from poverty. I gotta do it."</div>
-    </div>
+<div class="header">
+  <h1>270 GRIND</h1>
+  <div class="subtitle">FAF EMPIRE</div>
+  <div class="motto">No one saves me. I build it.</div>
+</div>
 
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Current Day</div>
-        <div class="stat-value" id="current-day-stat">1</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Days Left</div>
-        <div class="stat-value" id="days-left-stat">270</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Streak 🔥</div>
-        <div class="stat-value green" id="streak-stat">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Completed</div>
-        <div class="stat-value green" id="completed-stat">0</div>
-      </div>
-    </div>
+<div class="stats">
+  <div class="stat"><h3 id="day">1</h3><p>DAY</p></div>
+  <div class="stat"><h3 id="streak">0</h3><p>STREAK</p></div>
+</div>
 
-    <div class="progress-section">
-      <div class="progress-header">
-        <span class="progress-label">270-Day Journey</span>
-        <span class="progress-pct" id="progress-pct">0%</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-      </div>
-    </div>
+<div class="card">
+  <div class="title">DAILY CORE</div>
 
-    <div class="income-section">
-      <div class="income-title">Total Earned 💰</div>
-      <div class="income-display" id="income-display">$0</div>
-      <div class="income-input-row">
-        <input class="income-input" id="income-input" type="number" placeholder="Add $ earned..." inputmode="decimal">
-        <button class="btn" onclick="addIncome()">ADD</button>
-        <button class="btn red" onclick="setIncome()">SET</button>
-      </div>
-    </div>
-
-    <div class="milestones">
-      <div class="milestone-title">Milestones 🎯</div>
-      <div id="milestones-list"></div>
-    </div>
-
+  <div class="task" onclick="toggle('foia')">
+    <span>📁 FOIA Requests</span><div class="check" id="foia"></div>
   </div>
 
-  <!-- TODAY VIEW -->
-  <div class="view" id="view-today">
-
-    <div class="header">
-      <h1 id="today-day-header">DAY 1</h1>
-      <div class="subtitle" id="today-phase-label">GRIND PHASE · Days 1–90</div>
-      <div class="motto">10 hrs/day. No days off. Build the foundation.</div>
-    </div>
-
-    <div class="today-section">
-      <div class="today-title">Daily Checklist ✓</div>
-      <div id="daily-checklist"></div>
-      <button class="btn mark-day-btn" id="mark-day-btn" onclick="markToday()">✅ MARK DAY COMPLETE</button>
-    </div>
-
-    <div class="projections">
-      <div class="proj-title">270-Day Income Projections</div>
-      <div class="proj-row">
-        <span class="proj-scenario">🔴 Low (slow growth)</span>
-        <span class="proj-amount low">$6K–$12K</span>
-      </div>
-      <div class="proj-row">
-        <span class="proj-scenario">🟡 Medium (consistent)</span>
-        <span class="proj-amount med">$36K–$60K</span>
-      </div>
-      <div class="proj-row">
-        <span class="proj-scenario">🟠 High (FAF pops)</span>
-        <span class="proj-amount high">$120K–$240K</span>
-      </div>
-      <div class="proj-row">
-        <span class="proj-scenario">🟢 Very High (viral)</span>
-        <span class="proj-amount vhigh">$600K+</span>
-      </div>
-    </div>
-
+  <div class="task" onclick="toggle('faf')">
+    <span>🎬 FAF Work</span><div class="check" id="faf"></div>
   </div>
 
-  <!-- DAYS VIEW -->
-  <div class="view" id="view-days">
-
-    <div class="header">
-      <h1>ALL DAYS</h1>
-      <div class="subtitle">Tap a day to toggle ✅ / ❌</div>
-    </div>
-
-    <div class="days-section">
-      <div class="phase-header">⚡ PHASE 1 — GRIND (Days 1–90)</div>
-      <div class="day-grid" id="grid-phase1"></div>
-
-      <div class="phase-header">📈 PHASE 2 — GROWTH (Days 91–180)</div>
-      <div class="day-grid" id="grid-phase2"></div>
-
-      <div class="phase-header">🚀 PHASE 3 — SCALE (Days 181–270)</div>
-      <div class="day-grid" id="grid-phase3"></div>
-    </div>
-
+  <div class="task" onclick="toggle('trade')">
+    <span>📈 Swing Trading</span><div class="check" id="trade"></div>
   </div>
+
+  <div class="task" onclick="toggle('roblox')">
+    <span>🎮 Roblox Learning</span><div class="check" id="roblox"></div>
+  </div>
+
+  <div class="task" onclick="toggle('styles')">
+    <span>🎥 StylesStacks</span><div class="check" id="styles"></div>
+  </div>
+
+  <div class="task" onclick="toggle('fb')">
+    <span>📘 FilesAndFootage</span><div class="check" id="fb"></div>
+  </div>
+
+  <button class="btn" onclick="reset()">RESET DAY</button>
+</div>
 
 </div>
 
-<!-- BOTTOM NAV -->
-<div class="bottom-nav">
-  <button class="nav-btn active" onclick="showView('home')" id="nav-home">
-    <span class="nav-icon">🏠</span>HOME
-  </button>
-  <button class="nav-btn" onclick="showView('today')" id="nav-today">
-    <span class="nav-icon">⚡</span>TODAY
-  </button>
-  <button class="nav-btn" onclick="showView('days')" id="nav-days">
-    <span class="nav-icon">📅</span>DAYS
-  </button>
 </div>
 
-<div class="toast" id="toast"></div>
+<!-- NAV -->
+<div class="nav">
+  <button class="active" onclick="show('home')">HOME</button>
+</div>
 
 <script>
-  const START_DATE = new Date('2026-05-19');
-  const TOTAL_DAYS = 270;
+let state = JSON.parse(localStorage.getItem("grind")) || {
+  tasks:{},
+  streak:0,
+  lastReset:null
+};
 
-  const MILESTONES = [
-    { id: 'foia10', text: '10 FOIA requests filed', icon: '📁' },
-    { id: 'foia100', text: '100 FOIA requests filed', icon: '📁' },
-    { id: 'firstupload', text: 'First FAF video uploaded', icon: '🎬' },
-    { id: 'sub100', text: '100 subscribers', icon: '👥' },
-    { id: 'sub500', text: '500 subscribers', icon: '👥' },
-    { id: 'sub1k', text: '1,000 subscribers', icon: '👥' },
-    { id: 'hours4k', text: '4,000 watch hours hit', icon: '⏱️' },
-    { id: 'adsense', text: 'AdSense application submitted', icon: '💳' },
-    { id: 'first100', text: 'First $100 earned', icon: '💵' },
-    { id: 'first1k', text: 'First $1,000 month', icon: '💰' },
-    { id: 'first5k', text: 'First $5,000 month', icon: '💰' },
-    { id: 'llc', text: 'Nevada LLC formed', icon: '📋' },
-    { id: 'saved20k', text: '$20,000 saved', icon: '🏦' },
-    { id: 'move', text: 'Moved to Henderson, NV', icon: '🏠' },
-  ];
+const tasks = ["foia","faf","trade","roblox","styles","fb"];
 
-  const DAILY_TASKS = [
-    { id: 'foia', text: '10 FOIA requests filed' },
-    { id: 'trading', text: 'Swing trading study (1–2 hrs + notes)' },
-    { id: 'faf', text: 'FAF editing/production work' },
-    { id: 'analytics', text: 'Analytics & content optimization' },
-    { id: 'nowork', text: 'Relaxed ONLY after all work done' },
-  ];
+function save(){
+  localStorage.setItem("grind",JSON.stringify(state));
+}
 
-  // STATE
-  let state = {
-    days: {},        // { 1: 'complete' | 'failed' | null }
-    income: 0,
-    milestones: {},  // { id: true }
-    todayTasks: {},  // { taskId: true } — resets each calendar day
-    todayTasksDate: null,
-  };
-
-  function save() { localStorage.setItem('grind270', JSON.stringify(state)); }
-
-  function load() {
-    const raw = localStorage.getItem('grind270');
-    if (raw) state = { ...state, ...JSON.parse(raw) };
-  }
-
-  function getCurrentDay() {
-    const now = new Date();
-    const diff = Math.floor((now - START_DATE) / 86400000) + 1;
-    return Math.max(1, Math.min(diff, TOTAL_DAYS));
-  }
-
-  function formatMoney(n) {
-    if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
-    if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
-    return '$' + n.toLocaleString();
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
-  }
-
-  function showView(name) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('view-' + name).classList.add('active');
-    document.getElementById('nav-' + name).classList.add('active');
-  }
-
-  function addIncome() {
-    const val = parseFloat(document.getElementById('income-input').value);
-    if (isNaN(val) || val <= 0) return;
-    state.income += val;
-    document.getElementById('income-input').value = '';
-    save();
-    render();
-    showToast('+ ' + formatMoney(val) + ' added 💰');
-  }
-
-  function setIncome() {
-    const val = parseFloat(document.getElementById('income-input').value);
-    if (isNaN(val) || val < 0) return;
-    state.income = val;
-    document.getElementById('income-input').value = '';
-    save();
-    render();
-    showToast('Income set to ' + formatMoney(val));
-  }
-
-  function toggleDay(dayNum) {
-    const cur = state.days[dayNum];
-    if (cur === 'complete') state.days[dayNum] = 'failed';
-    else if (cur === 'failed') state.days[dayNum] = null;
-    else state.days[dayNum] = 'complete';
-    save();
-    render();
-  }
-
-  function markToday() {
-    const day = getCurrentDay();
-    state.days[day] = 'complete';
-    // reset today tasks
-    state.todayTasks = {};
-    Object.keys(state.todayTasks);
-    save();
-    render();
-    showToast('Day ' + day + ' LOCKED IN ✅');
-  }
-
-  function toggleTask(taskId) {
-    const today = new Date().toDateString();
-    if (state.todayTasksDate !== today) {
-      state.todayTasks = {};
-      state.todayTasksDate = today;
-    }
-    state.todayTasks[taskId] = !state.todayTasks[taskId];
-    save();
-    render();
-  }
-
-  function toggleMilestone(id) {
-    state.milestones[id] = !state.milestones[id];
-    save();
-    render();
-    if (state.milestones[id]) showToast('Milestone unlocked! 🎯');
-  }
-
-  function calcStreak() {
-    let streak = 0;
-    const day = getCurrentDay();
-    for (let i = day; i >= 1; i--) {
-      if (state.days[i] === 'complete') streak++;
-      else break;
-    }
-    return streak;
-  }
-
-  function render() {
-    const day = getCurrentDay();
-    const completed = Object.values(state.days).filter(v => v === 'complete').length;
-    const streak = calcStreak();
-    const pct = Math.round((completed / TOTAL_DAYS) * 100);
-
-    // Stats
-    document.getElementById('current-day-stat').textContent = day;
-    document.getElementById('days-left-stat').textContent = Math.max(0, TOTAL_DAYS - day + 1);
-    document.getElementById('streak-stat').textContent = streak;
-    document.getElementById('completed-stat').textContent = completed;
-    document.getElementById('progress-pct').textContent = pct + '%';
-    document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('income-display').textContent = formatMoney(state.income);
-
-    // Today header
-    document.getElementById('today-day-header').textContent = 'DAY ' + day;
-    const phase = day <= 90 ? 'GRIND PHASE · Days 1–90 · 10 hrs/day' :
-                  day <= 180 ? 'GROWTH PHASE · Days 91–180 · 8 hrs/day' :
-                  'SCALE PHASE · Days 181–270 · 8 hrs/day';
-    document.getElementById('today-phase-label').textContent = phase;
-
-    // Today tasks
-    const today = new Date().toDateString();
-    if (state.todayTasksDate !== today) state.todayTasks = {};
-    const cl = document.getElementById('daily-checklist');
-    cl.innerHTML = DAILY_TASKS.map(t => `
-      <div class="checklist-item ${state.todayTasks[t.id] ? 'checked' : ''}" onclick="toggleTask('${t.id}')">
-        <div class="check-box">${state.todayTasks[t.id] ? '✓' : ''}</div>
-        <div class="check-label">${t.text}</div>
-      </div>
-    `).join('');
-
-    const allDone = DAILY_TASKS.every(t => state.todayTasks[t.id]);
-    const btn = document.getElementById('mark-day-btn');
-    const todayDone = state.days[day] === 'complete';
-    btn.textContent = todayDone ? '✅ DAY ' + day + ' COMPLETE' : '✅ MARK DAY COMPLETE';
-    btn.style.opacity = todayDone ? '0.5' : '1';
-
-    // Milestones
-    document.getElementById('milestones-list').innerHTML = MILESTONES.map(m => `
-      <div class="milestone ${state.milestones[m.id] ? 'done' : ''}" onclick="toggleMilestone('${m.id}')">
-        <div class="milestone-check">${state.milestones[m.id] ? '✓' : ''}</div>
-        <div class="milestone-text">${m.icon} ${m.text}</div>
-      </div>
-    `).join('');
-
-    // Day grids
-    ['phase1','phase2','phase3'].forEach((phase, pi) => {
-      const start = pi * 90 + 1;
-      const end = start + 89;
-      let html = '';
-      for (let d = start; d <= end; d++) {
-        const status = state.days[d];
-        const isToday = d === day;
-        const cls = [
-          'day-dot',
-          status === 'complete' ? 'complete' : '',
-          status === 'failed' ? 'failed' : '',
-          isToday ? 'today' : ''
-        ].filter(Boolean).join(' ');
-        const emoji = status === 'complete' ? '✓' : status === 'failed' ? '✗' : d;
-        html += `<div class="${cls}" onclick="toggleDay(${d})" title="Day ${d}">${d <= day ? (status === 'complete' ? '✓' : status === 'failed' ? '✗' : d) : ''}</div>`;
-      }
-      document.getElementById('grid-' + phase).innerHTML = html;
-    });
-  }
-
-  load();
+function toggle(id){
+  state.tasks[id] = !state.tasks[id];
+  save();
   render();
+}
+
+function reset(){
+  state.tasks = {};
+  save();
+  render();
+}
+
+function render(){
+  tasks.forEach(id=>{
+    const el = document.getElementById(id);
+    const taskEl = el.parentElement;
+
+    if(state.tasks[id]){
+      el.innerHTML="✓";
+      taskEl.classList.add("done");
+    } else {
+      el.innerHTML="";
+      taskEl.classList.remove("done");
+    }
+  });
+
+  document.getElementById("streak").innerText = state.streak;
+  document.getElementById("day").innerText = 1;
+}
+
+function show(v){
+  document.querySelectorAll(".view").forEach(x=>x.classList.remove("active"));
+  document.getElementById(v).classList.add("active");
+}
+
+render();
 </script>
+
 </body>
 </html>
