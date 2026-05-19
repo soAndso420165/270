@@ -28,11 +28,12 @@ body{
   background:var(--bg);
   color:var(--text);
   font-family:'Space Mono',monospace;
+  min-height:100vh;
 }
 
+/* layout */
 .container{max-width:480px;margin:auto;padding:20px 16px 100px}
 
-/* HEADER */
 .header{text-align:center;padding:20px;border-bottom:1px solid var(--border)}
 .header h1{
   font-family:'Bebas Neue';
@@ -41,11 +42,26 @@ body{
   -webkit-background-clip:text;
   -webkit-text-fill-color:transparent;
 }
-
-.subtitle{font-size:10px;color:var(--muted);letter-spacing:2px}
+.subtitle{font-size:10px;color:var(--muted)}
 .motto{font-size:11px;color:var(--green);margin-top:6px}
 
-/* CARDS */
+/* stats */
+.stats{
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:10px;
+  margin-top:15px;
+}
+.stat{
+  background:var(--card);
+  padding:12px;
+  border:1px solid var(--border);
+  border-radius:10px;
+  text-align:center;
+}
+.stat h3{color:var(--gold);font-size:22px}
+
+/* sections */
 .card{
   background:var(--card);
   border:1px solid var(--border);
@@ -59,44 +75,39 @@ body{
   color:var(--muted);
   letter-spacing:2px;
   margin-bottom:10px;
-  text-transform:uppercase;
 }
 
-/* TASKS */
+/* tasks */
 .task{
   display:flex;
   justify-content:space-between;
-  align-items:center;
-  padding:8px 0;
+  padding:10px 0;
   border-bottom:1px solid var(--border);
   cursor:pointer;
   font-size:12px;
 }
-
 .task:last-child{border-bottom:none}
-
-.done{
-  color:var(--muted);
-  text-decoration:line-through;
-}
 
 .check{
   width:18px;height:18px;
   border:1px solid var(--muted);
   display:flex;
-  align-items:center;
   justify-content:center;
+  align-items:center;
   font-size:10px;
   border-radius:4px;
 }
 
+.task.done{
+  color:var(--muted);
+  text-decoration:line-through;
+}
 .task.done .check{
   background:var(--green);
   border-color:var(--green);
   color:#000;
 }
 
-/* BUTTON */
 .btn{
   width:100%;
   padding:12px;
@@ -108,26 +119,7 @@ body{
   cursor:pointer;
 }
 
-/* STATS */
-.stats{
-  display:grid;
-  grid-template-columns:1fr 1fr;
-  gap:10px;
-  margin-top:10px;
-}
-
-.stat{
-  background:var(--card);
-  padding:12px;
-  border-radius:10px;
-  border:1px solid var(--border);
-  text-align:center;
-}
-
-.stat h3{font-size:22px;color:var(--gold)}
-.stat p{font-size:9px;color:var(--muted);letter-spacing:2px}
-
-/* NAV */
+/* nav */
 .nav{
   position:fixed;
   bottom:0;
@@ -137,17 +129,15 @@ body{
   background:#000;
   border-top:1px solid var(--border);
 }
-
 .nav button{
   flex:1;
   padding:12px;
   background:none;
   border:none;
   color:var(--muted);
-  font-size:10px;
 }
-
 .nav button.active{color:var(--gold)}
+
 .view{display:none}
 .view.active{display:block}
 </style>
@@ -160,46 +150,53 @@ body{
 <!-- HOME -->
 <div class="view active" id="home">
 
-<div class="header">
-  <h1>270 GRIND</h1>
-  <div class="subtitle">FAF EMPIRE</div>
-  <div class="motto">No one saves me. I build it.</div>
-</div>
-
-<div class="stats">
-  <div class="stat"><h3 id="day">1</h3><p>DAY</p></div>
-  <div class="stat"><h3 id="streak">0</h3><p>STREAK</p></div>
-</div>
-
-<div class="card">
-  <div class="title">DAILY CORE</div>
-
-  <div class="task" onclick="toggle('foia')">
-    <span>📁 FOIA Requests</span><div class="check" id="foia"></div>
+  <div class="header">
+    <h1>270 GRIND</h1>
+    <div class="subtitle">FAF Empire</div>
+    <div class="motto">No one saves me. I build it.</div>
   </div>
 
-  <div class="task" onclick="toggle('faf')">
-    <span>🎬 FAF Work</span><div class="check" id="faf"></div>
+  <div class="stats">
+    <div class="stat">
+      <h3 id="day">1</h3>
+      <p>DAY</p>
+    </div>
+    <div class="stat">
+      <h3 id="streak">0</h3>
+      <p>STREAK</p>
+    </div>
   </div>
 
-  <div class="task" onclick="toggle('trade')">
-    <span>📈 Swing Trading</span><div class="check" id="trade"></div>
-  </div>
+  <div class="card">
+    <div class="title">DAILY CORE</div>
 
-  <div class="task" onclick="toggle('roblox')">
-    <span>🎮 Roblox Learning</span><div class="check" id="roblox"></div>
-  </div>
+    <div class="task" onclick="toggle('foia')">
+      <span>📁 FOIA Requests</span><div class="check" id="foia"></div>
+    </div>
 
-  <div class="task" onclick="toggle('styles')">
-    <span>🎥 StylesStacks</span><div class="check" id="styles"></div>
-  </div>
+    <div class="task" onclick="toggle('faf')">
+      <span>🎬 FAF Work</span><div class="check" id="faf"></div>
+    </div>
 
-  <div class="task" onclick="toggle('fb')">
-    <span>📘 FilesAndFootage</span><div class="check" id="fb"></div>
-  </div>
+    <div class="task" onclick="toggle('trade')">
+      <span>📈 Swing Trading</span><div class="check" id="trade"></div>
+    </div>
 
-  <button class="btn" onclick="reset()">RESET DAY</button>
-</div>
+    <!-- NEW ADDITIONS (your request) -->
+    <div class="task" onclick="toggle('roblox')">
+      <span>🎮 Roblox Learning</span><div class="check" id="roblox"></div>
+    </div>
+
+    <div class="task" onclick="toggle('styles')">
+      <span>🎥 StylesStacks</span><div class="check" id="styles"></div>
+    </div>
+
+    <div class="task" onclick="toggle('fb')">
+      <span>📘 FilesAndFootage</span><div class="check" id="fb"></div>
+    </div>
+
+    <button class="btn" onclick="reset()">RESET DAY</button>
+  </div>
 
 </div>
 
@@ -211,7 +208,7 @@ body{
 </div>
 
 <script>
-let state = JSON.parse(localStorage.getItem("grind")) || {
+let state = JSON.parse(localStorage.getItem("grind270")) || {
   tasks:{},
   streak:0,
   lastReset:null
@@ -220,7 +217,7 @@ let state = JSON.parse(localStorage.getItem("grind")) || {
 const tasks = ["foia","faf","trade","roblox","styles","fb"];
 
 function save(){
-  localStorage.setItem("grind",JSON.stringify(state));
+  localStorage.setItem("grind270",JSON.stringify(state));
 }
 
 function toggle(id){
@@ -236,6 +233,7 @@ function reset(){
 }
 
 function render(){
+
   tasks.forEach(id=>{
     const el = document.getElementById(id);
     const taskEl = el.parentElement;
@@ -249,7 +247,7 @@ function render(){
     }
   });
 
-  document.getElementById("streak").innerText = state.streak;
+  document.getElementById("streak").innerText = state.streak || 0;
   document.getElementById("day").innerText = 1;
 }
 
