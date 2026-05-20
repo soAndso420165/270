@@ -109,7 +109,7 @@
 <body>
 <div class="container">
 
-  <!-- HOME -->
+  <!-- HOME VIEW -->
   <div class="view active" id="view-home">
     <div class="header">
       <h1>270 GRIND</h1>
@@ -119,7 +119,7 @@
     <div class="stats-row">
       <div class="stat-card"><div class="stat-label">Current Day</div><div class="stat-value" id="current-day-stat">1</div></div>
       <div class="stat-card"><div class="stat-label">Days Left</div><div class="stat-value" id="days-left-stat">270</div></div>
-      <div class="stat-card"><div class="stat-label">Streak 🔥</div><div class="stat-value green" id="streak-stat">0</div></div>
+      <div class="stat-card"><div class="stat-label">Consistency 🔥</div><div class="stat-value green" id="streak-stat">100%</div></div>
       <div class="stat-card"><div class="stat-label">Completed</div><div class="stat-value green" id="completed-stat">0</div></div>
     </div>
 
@@ -147,7 +147,7 @@
     </div>
   </div>
 
-  <!-- TODAY -->
+  <!-- TODAY VIEW -->
   <div class="view" id="view-today">
     <div class="header">
       <h1 id="today-day-header">DAY 1</h1>
@@ -169,11 +169,11 @@
     </div>
   </div>
 
-  <!-- DAYS -->
+  <!-- ALL DAYS VIEW -->
   <div class="view" id="view-days">
     <div class="header">
       <h1>ALL DAYS</h1>
-      <div class="subtitle">Tap to toggle ✅ / ❌ / blank</div>
+      <div class="subtitle">Tap dots to manually override (✓ / ✗ / clear)</div>
     </div>
     <div class="days-section">
       <div class="phase-header">⚡ PHASE 1 — GRIND (Days 1–90)</div>
@@ -187,14 +187,14 @@
 
 </div>
 
-<!-- BOTTOM NAV -->
+<!-- NAVIGATION -->
 <div class="bottom-nav">
   <button class="nav-btn active" onclick="showView('home')" id="nav-home"><span class="nav-icon">🏠</span>HOME</button>
   <button class="nav-btn" onclick="showView('today')" id="nav-today"><span class="nav-icon">⚡</span>TODAY</button>
   <button class="nav-btn" onclick="showView('days')" id="nav-days"><span class="nav-icon">📅</span>DAYS</button>
 </div>
 
-<!-- MODAL -->
+<!-- MODALS SYSTEM -->
 <div class="modal-overlay" id="modal-overlay" onclick="closeModalOutside(event)">
   <div class="modal" id="modal">
     <div class="modal-title" id="modal-title"></div>
@@ -369,22 +369,12 @@ function toggleMilestone(id){
   if(state.milestones[id]) showToast('Milestone unlocked! 🎯');
 }
 
-function calcStreak(){
-  let s = 0;
-  const currentDay = getCurrentDay();
-  
-  // If today is complete, start counting from today. 
-  // Otherwise, start checking from yesterday backwards.
-  let startCheck = (state.days[currentDay] === 'complete') ? currentDay : currentDay - 1;
-  
-  for (let i = startCheck; i >= 1; i--) { 
-    if (state.days[i] === 'complete') {
-      s++; 
-    } else { 
-      break; 
-    } 
-  }
-  return s;
+// FIXED NEW CONSISTENCY RATE CALCULATION
+function calcConsistency(){
+  const day = getCurrentDay();
+  const completed = Object.values(state.days).filter(v=>v==='complete').length;
+  const rate = Math.round((completed / day) * 100);
+  return isNaN(rate) ? '100%' : rate + '%';
 }
 
 // MODAL FUNCTIONS
@@ -481,13 +471,13 @@ function addProj(){
 function render(){
   const day = getCurrentDay();
   const completed = Object.values(state.days).filter(v=>v==='complete').length;
-  const streak = calcStreak();
+  const consistency = calcConsistency();
   const pct = Math.round((completed/TOTAL_DAYS)*100);
   const todayHrs = getTodayHours();
 
   document.getElementById('current-day-stat').textContent = day;
   document.getElementById('days-left-stat').textContent = Math.max(0,TOTAL_DAYS-day+1);
-  document.getElementById('streak-stat').textContent = streak;
+  document.getElementById('streak-stat').textContent = consistency;
   document.getElementById('completed-stat').textContent = completed;
   document.getElementById('progress-pct').textContent = pct+'%';
   document.getElementById('progress-fill').style.width = pct+'%';
