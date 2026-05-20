@@ -370,8 +370,20 @@ function toggleMilestone(id){
 }
 
 function calcStreak(){
-  let s=0, day=getCurrentDay();
-  for(let i=day;i>=1;i--){ if(state.days[i]==='complete') s++; else break; }
+  let s = 0;
+  const currentDay = getCurrentDay();
+  
+  // If today is complete, start counting from today. 
+  // Otherwise, start checking from yesterday backwards.
+  let startCheck = (state.days[currentDay] === 'complete') ? currentDay : currentDay - 1;
+  
+  for (let i = startCheck; i >= 1; i--) { 
+    if (state.days[i] === 'complete') {
+      s++; 
+    } else { 
+      break; 
+    } 
+  }
   return s;
 }
 
