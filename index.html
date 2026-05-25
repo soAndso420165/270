@@ -253,7 +253,7 @@ body::before {
   <div class="view active" id="view-home">
     <div class="header">
       <h1>270 GRIND</h1>
-      <div class="subtitle">FAF Empire · Started May 24, 2026</div>
+      <div class="subtitle" id="start-date-subtitle">FAF Empire · Started —</div>
       <button class="sound-toggle" id="sound-btn" onclick="toggleSound()">🔇</button>
     </div>
 
@@ -346,7 +346,10 @@ body::before {
 <div class="toast" id="toast"></div>
 
 <script>
-const START_DATE = new Date('2026-05-24');
+// ─── START DATE: set once on first launch, stored in state ───────────────────
+// We store it as a local-midnight ISO date string (YYYY-MM-DD) so it never
+// drifts regardless of timezone changes.
+
 const TOTAL_DAYS = 270;
 const HOURS = [6,7,8,9,10,11,12];
 
@@ -409,14 +412,47 @@ const DEFAULT_PROJECTIONS = [
 ];
 
 let state = {
+  startDate: null,   // stored as 'YYYY-MM-DD' local date string, set on first launch
   days:{}, income:0, milestones:{},
   milestoneList:null, taskList:null, projectionList:null,
   todayTasks:{}, todayTasksDate:null, todayHours:{},
   soundOn:false,
 };
 
-// AUDIO
-const ctx = typeof AudioContext!=='undefined' ? new AudioContext() : null;
+// ─── DATE HELPERS ────────────────────────────────────────────────────────────
+
+// Returns today as 'YYYY-MM-DD' in LOCAL time (rolls over at local midnight)
+function localDateStr(date) {
+  const d = date || new Date();
+  const y = d.getFullYear();
+  const m = String(d.getMonth() + 1).padStart(2, '0');
+  const day = String(d.getDate()).padStart(2, '0');
+  return `${y}-${m}-${day}`;
+}
+
+// Parse a 'YYYY-MM-DD' string to a local midnight Date (no timezone shift)
+function parseLocalDate(str) {
+  const [y, m, d] = str.split('-').map(Number);
+  return new Date(y, m - 1, d);
+}
+
+// Get current day number (1-indexed, based on local midnight boundaries)
+function getCurrentDay() {
+  const start = parseLocalDate(state.startDate);
+  const todayMidnight = parseLocalDate(localDateStr());
+  const diffMs = todayMidnight - start;
+  const diffDays = Math.floor(diffMs / 86400000) + 1;
+  return Math.max(1, Math.min(diffDays, TOTAL_DAYS));
+}
+
+// Format start date for display e.g. "May 24, 2026"
+function formatStartDate(str) {
+  const d = parseLocalDate(str);
+  return d.toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' });
+}
+
+// ─── AUDIO ───────────────────────────────────────────────────────────────────
+const ctx = typeof AudioContext !== 'undefined' ? new AudioContext() : null;
 
 function playSound(type) {
   if (!state.soundOn || !ctx) return;
@@ -441,8 +477,8 @@ function playSound(type) {
       o.start(now); o.stop(now + 0.5);
     } else if (type === 'milestone') {
       o.type = 'sine';
-      [523,659,784,1047].forEach((f,i)=>{
-        o.frequency.setValueAtTime(f, now + i*0.1);
+      [523,659,784,1047].forEach((f,i) => {
+        o.frequency.setValueAtTime(f, now + i * 0.1);
       });
       g.gain.setValueAtTime(0.15, now);
       g.gain.exponentialRampToValueAtTime(0.001, now + 0.6);
@@ -460,7 +496,7 @@ function toggleSound() {
   if (state.soundOn && ctx && ctx.state === 'suspended') ctx.resume();
 }
 
-// CONFETTI
+// ─── CONFETTI ────────────────────────────────────────────────────────────────
 function confetti(x, y) {
   const colors = ['#00ff88','#ffd700','#ff3b3b','#bf00ff','#ff8c00','#fff'];
   for (let i = 0; i < 28; i++) {
@@ -475,138 +511,141 @@ function confetti(x, y) {
       transform:rotate(${Math.random()*360}deg);
     `;
     document.body.appendChild(el);
-    setTimeout(()=>el.remove(), 1600);
+    setTimeout(() => el.remove(), 1600);
   }
 }
 
-// SAVE / LOAD
-function save(){ localStorage.setItem('grind270v3', JSON.stringify(state)); }
-function load(){
+// ─── SAVE / LOAD ─────────────────────────────────────────────────────────────
+function save() { localStorage.setItem('grind270v3', JSON.stringify(state)); }
+function load() {
   try {
     const raw = localStorage.getItem('grind270v3');
-    if(raw) state = {...state, ...JSON.parse(raw)};
+    if (raw) state = {...state, ...JSON.parse(raw)};
   } catch(e){}
-  if(!state.milestoneList) state.milestoneList = DEFAULT_MILESTONES.map(m=>({...m}));
-  if(!state.taskList) state.taskList = DEFAULT_TASKS.map(t=>({...t}));
-  if(!state.projectionList) state.projectionList = DEFAULT_PROJECTIONS.map(p=>({...p}));
+
+  // Set start date to TODAY on first ever launch (local date, rolls at midnight)
+  if (!state.startDate) {
+    state.startDate = localDateStr();
+    save();
+  }
+
+  if (!state.milestoneList) state.milestoneList = DEFAULT_MILESTONES.map(m => ({...m}));
+  if (!state.taskList) state.taskList = DEFAULT_TASKS.map(t => ({...t}));
+  if (!state.projectionList) state.projectionList = DEFAULT_PROJECTIONS.map(p => ({...p}));
 }
 
-function getCurrentDay(){
-  const diff = Math.floor((new Date()-START_DATE)/86400000)+1;
-  return Math.max(1,Math.min(diff,TOTAL_DAYS));
+// ─── HELPERS ─────────────────────────────────────────────────────────────────
+function formatMoney(n) {
+  if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
+  if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
+  return '$' + n.toLocaleString();
 }
 
-function formatMoney(n){
-  if(n>=1000000) return '$'+(n/1000000).toFixed(1)+'M';
-  if(n>=1000) return '$'+(n/1000).toFixed(1)+'K';
-  return '$'+n.toLocaleString();
-}
-
-function showToast(msg, isRed){
+function showToast(msg, isRed) {
   const t = document.getElementById('toast');
   t.textContent = msg;
   t.style.background = isRed ? 'var(--red)' : 'var(--green)';
   t.style.color = isRed ? '#fff' : '#000';
   t.classList.add('show');
-  setTimeout(()=>t.classList.remove('show'), 2300);
+  setTimeout(() => t.classList.remove('show'), 2300);
 }
 
-function showView(name){
+function showView(name) {
   const prev = document.querySelector('.view.active');
-  if(prev){ prev.classList.remove('visible'); setTimeout(()=>prev.classList.remove('active'),50); }
-  document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
-  const next = document.getElementById('view-'+name);
-  setTimeout(()=>{
+  if (prev) { prev.classList.remove('visible'); setTimeout(() => prev.classList.remove('active'), 50); }
+  document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+  const next = document.getElementById('view-' + name);
+  setTimeout(() => {
     next.classList.add('active');
-    requestAnimationFrame(()=>requestAnimationFrame(()=>next.classList.add('visible')));
+    requestAnimationFrame(() => requestAnimationFrame(() => next.classList.add('visible')));
   }, 60);
-  document.getElementById('nav-'+name).classList.add('active');
+  document.getElementById('nav-' + name).classList.add('active');
 }
 
-function addIncome(){
+function addIncome() {
   const val = parseFloat(document.getElementById('income-input').value);
-  if(isNaN(val)||val<=0) return;
+  if (isNaN(val) || val <= 0) return;
   state.income += val;
-  document.getElementById('income-input').value='';
-  save(); render(); showToast('+ '+formatMoney(val)+' added 💰');
+  document.getElementById('income-input').value = '';
+  save(); render(); showToast('+ ' + formatMoney(val) + ' added 💰');
 }
 
-function setIncome(){
+function setIncome() {
   const val = parseFloat(document.getElementById('income-input').value);
-  if(isNaN(val)||val<0) return;
+  if (isNaN(val) || val < 0) return;
   state.income = val;
-  document.getElementById('income-input').value='';
-  save(); render(); showToast('Income set to '+formatMoney(val));
+  document.getElementById('income-input').value = '';
+  save(); render(); showToast('Income set to ' + formatMoney(val));
 }
 
-function toggleDay(d){
+function toggleDay(d) {
   const cur = state.days[d];
-  if(cur==='complete') state.days[d]='failed';
-  else if(cur==='failed') state.days[d]=null;
-  else state.days[d]='complete';
+  if (cur === 'complete') state.days[d] = 'failed';
+  else if (cur === 'failed') state.days[d] = null;
+  else state.days[d] = 'complete';
   save(); render();
 }
 
-function selectHours(h){
-  state.todayHours[new Date().toDateString()] = h;
+function selectHours(h) {
+  state.todayHours[localDateStr()] = h;
   save(); render();
 }
 
-function getTodayHours(){ return state.todayHours[new Date().toDateString()]||0; }
+function getTodayHours() { return state.todayHours[localDateStr()] || 0; }
 
-function toggleTask(id){
-  const today = new Date().toDateString();
-  if(state.todayTasksDate!==today){ state.todayTasks={}; state.todayTasksDate=today; }
+function toggleTask(id) {
+  const today = localDateStr();
+  if (state.todayTasksDate !== today) { state.todayTasks = {}; state.todayTasksDate = today; }
   state.todayTasks[id] = !state.todayTasks[id];
   playSound('click');
   save(); render();
 }
 
-function markToday(){
+function markToday() {
   const day = getCurrentDay();
-  if(state.days[day]==='complete') return;
-  state.days[day]='complete';
+  if (state.days[day] === 'complete') return;
+  state.days[day] = 'complete';
   const btn = document.getElementById('mark-day-btn');
   const r = btn.getBoundingClientRect();
   confetti(r.left + r.width/2, r.top);
   playSound('complete');
-  save(); render(); showToast('Day '+day+' LOCKED IN ✅');
+  save(); render(); showToast('Day ' + day + ' LOCKED IN ✅');
 }
 
-function toggleMilestone(id, el){
+function toggleMilestone(id, el) {
   state.milestones[id] = !state.milestones[id];
   save(); render();
-  if(state.milestones[id]){
-    const rect = el ? el.getBoundingClientRect() : {left:window.innerWidth/2, top:window.innerHeight/2, width:0};
-    confetti(rect.left+rect.width/2, rect.top);
+  if (state.milestones[id]) {
+    const rect = el ? el.getBoundingClientRect() : {left: window.innerWidth/2, top: window.innerHeight/2, width: 0};
+    confetti(rect.left + rect.width/2, rect.top);
     playSound('milestone');
     showToast('Milestone unlocked! 🎯');
   }
 }
 
-function calcStreak(){
-  let s=0, day=getCurrentDay();
-  for(let i=day;i>=1;i--){ if(state.days[i]==='complete') s++; else break; }
+function calcStreak() {
+  let s = 0, day = getCurrentDay();
+  for (let i = day; i >= 1; i--) { if (state.days[i] === 'complete') s++; else break; }
   return s;
 }
 
-function getStreakTier(s){ return STREAK_TIERS.find(t=>s>=t.min)||STREAK_TIERS[STREAK_TIERS.length-1]; }
+function getStreakTier(s) { return STREAK_TIERS.find(t => s >= t.min) || STREAK_TIERS[STREAK_TIERS.length-1]; }
 
-// MODAL
-function openModal(type){
+// ─── MODAL ───────────────────────────────────────────────────────────────────
+function openModal(type) {
   document.getElementById('modal-overlay').classList.add('open');
   const title = document.getElementById('modal-title');
   const body = document.getElementById('modal-body');
-  if(type==='milestones'){ title.textContent='Edit Milestones'; renderMilestonesModal(body); }
-  else if(type==='tasks'){ title.textContent='Edit Daily Tasks'; renderTasksModal(body); }
-  else if(type==='projections'){ title.textContent='Edit Projections'; renderProjectionsModal(body); }
+  if (type === 'milestones') { title.textContent = 'Edit Milestones'; renderMilestonesModal(body); }
+  else if (type === 'tasks') { title.textContent = 'Edit Daily Tasks'; renderTasksModal(body); }
+  else if (type === 'projections') { title.textContent = 'Edit Projections'; renderProjectionsModal(body); }
 }
 
-function closeModal(){ document.getElementById('modal-overlay').classList.remove('open'); save(); render(); }
-function closeModalOutside(e){ if(e.target===document.getElementById('modal-overlay')) closeModal(); }
+function closeModal() { document.getElementById('modal-overlay').classList.remove('open'); save(); render(); }
+function closeModalOutside(e) { if (e.target === document.getElementById('modal-overlay')) closeModal(); }
 
-function renderMilestonesModal(body){
-  body.innerHTML=`<div>${state.milestoneList.map(m=>`
+function renderMilestonesModal(body) {
+  body.innerHTML = `<div>${state.milestoneList.map(m => `
     <div class="modal-item">
       <div class="modal-item-text">${m.icon} ${m.text}</div>
       <button class="del-btn" onclick="delMilestone('${m.id}')">×</button>
@@ -621,17 +660,17 @@ function renderMilestonesModal(body){
   </div>`;
 }
 
-function delMilestone(id){ state.milestoneList=state.milestoneList.filter(m=>m.id!==id); renderMilestonesModal(document.getElementById('modal-body')); }
-function addMilestone(){
-  const icon=document.getElementById('mi-icon').value.trim()||'🎯';
-  const text=document.getElementById('mi-text').value.trim();
-  if(!text) return;
-  state.milestoneList.push({id:'m'+Date.now(),icon,text});
+function delMilestone(id) { state.milestoneList = state.milestoneList.filter(m => m.id !== id); renderMilestonesModal(document.getElementById('modal-body')); }
+function addMilestone() {
+  const icon = document.getElementById('mi-icon').value.trim() || '🎯';
+  const text = document.getElementById('mi-text').value.trim();
+  if (!text) return;
+  state.milestoneList.push({id: 'm' + Date.now(), icon, text});
   renderMilestonesModal(document.getElementById('modal-body'));
 }
 
-function renderTasksModal(body){
-  body.innerHTML=`<div>${state.taskList.map(t=>`
+function renderTasksModal(body) {
+  body.innerHTML = `<div>${state.taskList.map(t => `
     <div class="modal-item">
       <div class="modal-item-text">${t.text}</div>
       <button class="del-btn" onclick="delTask('${t.id}')">×</button>
@@ -643,16 +682,16 @@ function renderTasksModal(body){
   </div>`;
 }
 
-function delTask(id){ state.taskList=state.taskList.filter(t=>t.id!==id); renderTasksModal(document.getElementById('modal-body')); }
-function addTask(){
-  const text=document.getElementById('ti-text').value.trim();
-  if(!text) return;
-  state.taskList.push({id:'t'+Date.now(),text});
+function delTask(id) { state.taskList = state.taskList.filter(t => t.id !== id); renderTasksModal(document.getElementById('modal-body')); }
+function addTask() {
+  const text = document.getElementById('ti-text').value.trim();
+  if (!text) return;
+  state.taskList.push({id: 't' + Date.now(), text});
   renderTasksModal(document.getElementById('modal-body'));
 }
 
-function renderProjectionsModal(body){
-  body.innerHTML=`<div>${state.projectionList.map(p=>`
+function renderProjectionsModal(body) {
+  body.innerHTML = `<div>${state.projectionList.map(p => `
     <div class="modal-item">
       <div class="modal-item-text">${p.scenario}</div>
       <input class="proj-amount-input" value="${p.amount}" onchange="updateProj('${p.id}',this.value)">
@@ -667,102 +706,107 @@ function renderProjectionsModal(body){
   </div>`;
 }
 
-function delProj(id){ state.projectionList=state.projectionList.filter(p=>p.id!==id); renderProjectionsModal(document.getElementById('modal-body')); }
-function updateProj(id,val){ const p=state.projectionList.find(p=>p.id===id); if(p) p.amount=val; }
-function addProj(){
-  const scenario=document.getElementById('pi-scenario').value.trim();
-  const amount=document.getElementById('pi-amount').value.trim();
-  if(!scenario||!amount) return;
-  state.projectionList.push({id:'p'+Date.now(),scenario,amount});
+function delProj(id) { state.projectionList = state.projectionList.filter(p => p.id !== id); renderProjectionsModal(document.getElementById('modal-body')); }
+function updateProj(id, val) { const p = state.projectionList.find(p => p.id === id); if (p) p.amount = val; }
+function addProj() {
+  const scenario = document.getElementById('pi-scenario').value.trim();
+  const amount = document.getElementById('pi-amount').value.trim();
+  if (!scenario || !amount) return;
+  state.projectionList.push({id: 'p' + Date.now(), scenario, amount});
   renderProjectionsModal(document.getElementById('modal-body'));
 }
 
-function render(){
+// ─── RENDER ──────────────────────────────────────────────────────────────────
+function render() {
   const day = getCurrentDay();
-  const completed = Object.values(state.days).filter(v=>v==='complete').length;
+  const completed = Object.values(state.days).filter(v => v === 'complete').length;
   const streak = calcStreak();
   const tier = getStreakTier(streak);
-  const pct = Math.round((completed/TOTAL_DAYS)*100);
+  const pct = Math.round((completed / TOTAL_DAYS) * 100);
   const todayHrs = getTodayHours();
+
+  // Header subtitle with real start date
+  document.getElementById('start-date-subtitle').textContent =
+    'FAF Empire · Started ' + formatStartDate(state.startDate);
 
   // Stats
   document.getElementById('current-day-stat').textContent = day;
-  document.getElementById('days-left-stat').textContent = Math.max(0,TOTAL_DAYS-day+1);
+  document.getElementById('days-left-stat').textContent = Math.max(0, TOTAL_DAYS - day + 1);
   document.getElementById('completed-stat').textContent = completed;
-  document.getElementById('progress-pct').textContent = pct+'%';
-  document.getElementById('progress-fill').style.width = pct+'%';
+  document.getElementById('progress-pct').textContent = pct + '%';
+  document.getElementById('progress-fill').style.width = pct + '%';
   document.getElementById('income-display').textContent = formatMoney(state.income);
 
   // Streak
   const sv = document.getElementById('streak-stat');
-  sv.className = 'streak-val '+tier.cls;
-  sv.textContent = streak + (tier.emoji ? ' '+tier.emoji : '');
+  sv.className = 'streak-val ' + tier.cls;
+  sv.textContent = streak + (tier.emoji ? ' ' + tier.emoji : '');
   document.getElementById('streak-label').textContent = tier.label;
   const sc = document.getElementById('streak-card');
-  sc.className = 'stat-card' + (streak>=60?' streak-legend':streak>=7?' streak-active':'');
+  sc.className = 'stat-card' + (streak >= 60 ? ' streak-legend' : streak >= 7 ? ' streak-active' : '');
 
   // Sound button
   const sb = document.getElementById('sound-btn');
   sb.textContent = state.soundOn ? '🔊' : '🔇';
   sb.classList.toggle('on', state.soundOn);
 
-  // Today
-  document.getElementById('today-day-header').textContent = 'DAY '+day;
+  // Today tab
+  document.getElementById('today-day-header').textContent = 'DAY ' + day;
   document.getElementById('today-phase-label').textContent =
-    day<=90 ? 'GRIND PHASE · Days 1–90 · 6–12 hrs/day' :
-    day<=180 ? 'GROWTH PHASE · Days 91–180 · 6–12 hrs/day' :
-    'SCALE PHASE · Days 181–270 · 6–12 hrs/day';
-  document.getElementById('hours-badge').textContent = todayHrs ? todayHrs+' HRS' : '— HRS';
-  document.getElementById('hours-selector').innerHTML = HOURS.map(h=>
-    `<div class="hour-chip ${todayHrs===h?'selected':''}" onclick="selectHours(${h})">${h}h</div>`
+    day <= 90  ? 'GRIND PHASE · Days 1–90 · 6–12 hrs/day' :
+    day <= 180 ? 'GROWTH PHASE · Days 91–180 · 6–12 hrs/day' :
+                 'SCALE PHASE · Days 181–270 · 6–12 hrs/day';
+  document.getElementById('hours-badge').textContent = todayHrs ? todayHrs + ' HRS' : '— HRS';
+  document.getElementById('hours-selector').innerHTML = HOURS.map(h =>
+    `<div class="hour-chip ${todayHrs === h ? 'selected' : ''}" onclick="selectHours(${h})">${h}h</div>`
   ).join('');
 
-  const today = new Date().toDateString();
-  if(state.todayTasksDate!==today) state.todayTasks={};
-  document.getElementById('daily-checklist').innerHTML = state.taskList.map(t=>`
-    <div class="checklist-item ${state.todayTasks[t.id]?'checked':''}" onclick="toggleTask('${t.id}')">
-      <div class="check-box">${state.todayTasks[t.id]?'✓':''}</div>
+  // Reset tasks if it's a new day
+  const today = localDateStr();
+  if (state.todayTasksDate !== today) state.todayTasks = {};
+  document.getElementById('daily-checklist').innerHTML = state.taskList.map(t => `
+    <div class="checklist-item ${state.todayTasks[t.id] ? 'checked' : ''}" onclick="toggleTask('${t.id}')">
+      <div class="check-box">${state.todayTasks[t.id] ? '✓' : ''}</div>
       <div class="check-label">${t.text}</div>
     </div>`).join('');
 
-  const todayDone = state.days[day]==='complete';
+  const todayDone = state.days[day] === 'complete';
   const btn = document.getElementById('mark-day-btn');
-  btn.textContent = todayDone ? '✅ DAY '+day+' COMPLETE' : '✅ MARK DAY COMPLETE';
-  btn.className = 'btn mark-day-btn'+(todayDone?' done':'');
+  btn.textContent = todayDone ? '✅ DAY ' + day + ' COMPLETE' : '✅ MARK DAY COMPLETE';
+  btn.className = 'btn mark-day-btn' + (todayDone ? ' done' : '');
 
   // Milestones
-  document.getElementById('milestones-list').innerHTML = state.milestoneList.map(m=>`
-    <div class="milestone ${state.milestones[m.id]?'done':''}" onclick="toggleMilestone('${m.id}',this)">
-      <div class="milestone-check">${state.milestones[m.id]?'✓':''}</div>
+  document.getElementById('milestones-list').innerHTML = state.milestoneList.map(m => `
+    <div class="milestone ${state.milestones[m.id] ? 'done' : ''}" onclick="toggleMilestone('${m.id}',this)">
+      <div class="milestone-check">${state.milestones[m.id] ? '✓' : ''}</div>
       <div class="milestone-text">${m.icon} ${m.text}</div>
     </div>`).join('');
 
   // Projections
-  document.getElementById('projections-list').innerHTML = state.projectionList.map(p=>`
+  document.getElementById('projections-list').innerHTML = state.projectionList.map(p => `
     <div class="proj-row">
       <span class="proj-scenario">${p.scenario}</span>
       <span class="proj-amount">${p.amount}</span>
     </div>`).join('');
 
   // Day grids
-  ['phase1','phase2','phase3'].forEach((phase,pi)=>{
-    const start=pi*90+1;
-    let html='';
-    for(let d=start;d<=start+89;d++){
-      const s=state.days[d], isToday=d===day;
-      const cls=['day-dot',s==='complete'?'complete':'',s==='failed'?'failed':'',isToday?'today':''].filter(Boolean).join(' ');
-      const label=s==='complete'?'✓':s==='failed'?'✗':d<=day?d:'';
-      html+=`<div class="${cls}" onclick="toggleDay(${d})" title="Day ${d}">${label}</div>`;
+  ['phase1','phase2','phase3'].forEach((phase, pi) => {
+    const start = pi * 90 + 1;
+    let html = '';
+    for (let d = start; d <= start + 89; d++) {
+      const s = state.days[d], isToday = d === day;
+      const cls = ['day-dot', s==='complete'?'complete':'', s==='failed'?'failed':'', isToday?'today':''].filter(Boolean).join(' ');
+      const label = s==='complete' ? '✓' : s==='failed' ? '✗' : d <= day ? d : '';
+      html += `<div class="${cls}" onclick="toggleDay(${d})" title="Day ${d}">${label}</div>`;
     }
-    document.getElementById('grid-'+phase).innerHTML=html;
+    document.getElementById('grid-' + phase).innerHTML = html;
   });
 }
 
-// Init
+// ─── INIT ────────────────────────────────────────────────────────────────────
 load();
 render();
-// Trigger first view animation
-setTimeout(()=>document.getElementById('view-home').classList.add('visible'),80);
+setTimeout(() => document.getElementById('view-home').classList.add('visible'), 80);
 </script>
 </body>
 </html>
