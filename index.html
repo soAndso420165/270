@@ -30,16 +30,6 @@
     overflow-x: hidden;
   }
 
-  body::before {
-    content: '';
-    position: fixed;
-    inset: 0;
-    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.04'/%3E%3C/svg%3E");
-    pointer-events: none;
-    z-index: 999;
-    opacity: 0.3;
-  }
-
   .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
 
   .header {
@@ -83,22 +73,8 @@
     text-align: center;
   }
 
-  .stat-label {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 6px;
-  }
-
-  .stat-value {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 36px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    line-height: 1;
-  }
-
+  .stat-label { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
+  .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; color: var(--gold); line-height: 1; }
   .stat-value.green { color: var(--green); }
 
   .progress-section {
@@ -109,29 +85,11 @@
     margin-bottom: 20px;
   }
 
-  .progress-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 10px;
-  }
-
+  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
   .progress-label { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
   .progress-pct { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--gold); }
-
-  .progress-bar {
-    height: 6px;
-    background: var(--border);
-    border-radius: 3px;
-    overflow: hidden;
-  }
-
-  .progress-fill {
-    height: 100%;
-    background: linear-gradient(90deg, var(--green), var(--gold));
-    border-radius: 3px;
-    transition: width 0.5s ease;
-  }
+  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
+  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--gold)); border-radius: 3px; transition: width 0.5s ease; }
 
   .income-section {
     background: var(--card);
@@ -141,27 +99,9 @@
     margin-bottom: 20px;
   }
 
-  .income-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
-
-  .income-display {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 48px;
-    color: var(--green);
-    letter-spacing: 2px;
-    text-align: center;
-    margin-bottom: 12px;
-  }
-
-  .income-input-row {
-    display: flex;
-    gap: 8px;
-  }
+  .income-title { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+  .income-display { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--green); letter-spacing: 2px; text-align: center; margin-bottom: 12px; }
+  .income-input-row { display: flex; gap: 8px; }
 
   .income-input {
     flex: 1;
@@ -190,26 +130,21 @@
     letter-spacing: 1px;
     text-transform: uppercase;
     transition: opacity 0.2s;
+    white-space: nowrap;
   }
 
   .btn:active { opacity: 0.7; }
   .btn.red { background: var(--red); color: #fff; }
-  .btn.sm { padding: 10px 14px; font-size: 11px; border-radius: 8px; }
+  .btn.gold { background: var(--gold); color: #000; }
+  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
+  .btn.ghost:hover { border-color: var(--muted); color: var(--text); }
+  .btn.sm { padding: 8px 12px; font-size: 10px; }
 
-  .section-header-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 12px;
-  }
+  .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
 
-  .inline-add-form {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
+  .inline-add-form { display: flex; gap: 8px; margin-bottom: 16px; }
 
-  .milestones {
+  .card-section {
     background: var(--card);
     border: 1px solid var(--border);
     border-radius: 12px;
@@ -217,33 +152,30 @@
     margin-bottom: 20px;
   }
 
-  .milestone-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-  }
+  .section-title { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
 
-  .milestone {
+  .list-item {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 8px 0;
+    padding: 9px 0;
     border-bottom: 1px solid var(--border);
     font-size: 11px;
+    gap: 8px;
   }
 
-  .milestone:last-child { border-bottom: none; }
+  .list-item:last-child { border-bottom: none; }
 
-  .milestone-interactive-area {
+  .item-interactive {
     display: flex;
     align-items: center;
     gap: 10px;
     flex: 1;
     cursor: pointer;
+    min-width: 0;
   }
 
-  .milestone-check {
+  .item-check {
     width: 18px;
     height: 18px;
     border: 1px solid var(--muted);
@@ -256,101 +188,40 @@
     transition: all 0.2s;
   }
 
-  .milestone.done .milestone-check {
-    background: var(--green);
-    border-color: var(--green);
-    color: #000;
-  }
+  .list-item.done .item-check { background: var(--green); border-color: var(--green); color: #000; }
+  .list-item.done .item-text { color: var(--muted); text-decoration: line-through; }
+  .item-text { flex: 1; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  .milestone.done .milestone-text { color: var(--muted); text-decoration: line-through; }
-  .milestone-text { flex: 1; color: var(--text); }
-
-  .delete-icon {
-    color: var(--red);
-    cursor: pointer;
-    font-size: 14px;
-    padding: 2px 8px;
-    opacity: 0.5;
-    transition: opacity 0.2s;
-  }
-  .delete-icon:hover { opacity: 1; }
-
-  .days-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .day-grid {
-    display: grid;
-    grid-template-columns: repeat(10, 1fr);
-    gap: 4px;
-    margin-bottom: 16px;
-  }
-
-  .day-dot {
-    aspect-ratio: 1;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 6px;
-    color: var(--muted);
-    transition: all 0.15s;
-    position: relative;
-  }
-
-  .day-dot.complete { background: var(--green); border-color: var(--green); }
-  .day-dot.failed { background: var(--red); border-color: var(--red); }
-  .day-dot.today { border-color: var(--gold); box-shadow: 0 0 6px var(--gold); }
-  .day-dot:active { transform: scale(0.85); }
-
-  .phase-header {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    margin: 12px 0 8px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
-
-  .today-section {
-    background: var(--card);
-    border: 1px solid var(--green);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
-
-  .today-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--green);
-    text-transform: uppercase;
-  }
-
-  .checklist-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-  }
-
-  .checklist-item:last-child { border-bottom: none; }
-
-  .checklist-interactive-area {
-    display: flex;
-    align-items: center;
-    gap: 10px;
+  .item-edit-input {
     flex: 1;
-    cursor: pointer;
+    background: var(--bg);
+    border: 1px solid var(--green);
+    border-radius: 6px;
+    color: var(--text);
+    font-family: 'Space Mono', monospace;
+    font-size: 11px;
+    padding: 4px 8px;
+    outline: none;
+    min-width: 0;
   }
+
+  .item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+
+  .icon-btn {
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 13px;
+    transition: opacity 0.2s;
+    opacity: 0.5;
+  }
+
+  .icon-btn:hover { opacity: 1; }
+  .icon-btn.edit { color: var(--gold); }
+  .icon-btn.del { color: var(--red); }
+  .icon-btn.save { color: var(--green); }
 
   .check-box {
     width: 20px;
@@ -365,49 +236,37 @@
     transition: all 0.2s;
   }
 
-  .checklist-item.checked .check-box {
-    background: var(--green);
-    border-color: var(--green);
-    color: #000;
+  .checklist-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); gap: 8px; }
+  .checklist-item:last-child { border-bottom: none; }
+
+  .checklist-interactive {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    cursor: pointer;
+    min-width: 0;
   }
 
+  .checklist-item.checked .check-box { background: var(--green); border-color: var(--green); color: #000; }
   .checklist-item.checked .check-label { color: var(--muted); text-decoration: line-through; }
-  .check-label { font-size: 12px; line-height: 1.4; }
+  .check-label { font-size: 12px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 
-  .mark-day-btn {
-    width: 100%;
-    padding: 14px;
-    font-size: 13px;
-    letter-spacing: 2px;
-    border-radius: 10px;
-    margin-top: 16px;
-  }
+  .mark-day-btn { width: 100%; padding: 14px; font-size: 13px; letter-spacing: 2px; border-radius: 10px; margin-top: 16px; }
 
-  .projections {
+  .today-section {
     background: var(--card);
-    border: 1px solid var(--border);
+    border: 1px solid var(--green);
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 20px;
   }
 
-  .proj-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 12px;
-  }
+  .today-title { font-size: 9px; letter-spacing: 2px; color: var(--green); text-transform: uppercase; }
 
-  .proj-row {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 8px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 11px;
-  }
-
+  .projections { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+  .proj-title { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
+  .proj-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
   .proj-row:last-child { border-bottom: none; }
   .proj-scenario { color: var(--muted); }
   .proj-amount { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; }
@@ -416,12 +275,42 @@
   .proj-amount.high { color: var(--gold); }
   .proj-amount.vhigh { color: var(--green); }
 
+  .days-section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
+  .day-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-bottom: 16px; }
+  .day-dot {
+    aspect-ratio: 1;
+    border-radius: 3px;
+    border: 1px solid var(--border);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 6px;
+    color: var(--muted);
+    transition: all 0.15s;
+  }
+
+  .day-dot.complete { background: var(--green); border-color: var(--green); }
+  .day-dot.failed { background: var(--red); border-color: var(--red); }
+  .day-dot.today { border-color: var(--gold); box-shadow: 0 0 6px rgba(255,215,0,0.4); }
+  .day-dot:active { transform: scale(0.85); }
+
+  .phase-header {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 13px;
+    letter-spacing: 2px;
+    color: var(--gold);
+    margin: 12px 0 8px;
+    padding-top: 12px;
+    border-top: 1px solid var(--border);
+  }
+
   .bottom-nav {
     position: fixed;
     bottom: 0;
     left: 0;
     right: 0;
-    background: rgba(10,10,10,0.95);
+    background: rgba(10,10,10,0.97);
     backdrop-filter: blur(10px);
     border-top: 1px solid var(--border);
     display: flex;
@@ -472,16 +361,115 @@
   }
 
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+
+  /* Nuclear reset zone */
+  .nuke-zone {
+    margin-top: 40px;
+    padding-top: 20px;
+    border-top: 1px dashed #1a1a1a;
+    text-align: right;
+  }
+
+  .nuke-toggle {
+    background: transparent;
+    border: none;
+    color: #1e1e1e;
+    font-family: 'Space Mono', monospace;
+    font-size: 8px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    padding: 4px 8px;
+    text-transform: uppercase;
+  }
+
+  .nuke-toggle:hover { color: #333; }
+
+  .nuke-panel {
+    display: none;
+    background: #0f0000;
+    border: 1px solid #330000;
+    border-radius: 10px;
+    padding: 14px;
+    margin-top: 8px;
+    text-align: left;
+  }
+
+  .nuke-panel.visible { display: block; }
+
+  .nuke-title { font-size: 9px; letter-spacing: 2px; color: #661111; text-transform: uppercase; margin-bottom: 10px; }
+
+  .nuke-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
+
+  .nuke-input {
+    flex: 1;
+    background: #0a0000;
+    border: 1px solid #330000;
+    border-radius: 6px;
+    color: #ff6666;
+    font-family: 'Space Mono', monospace;
+    font-size: 12px;
+    padding: 8px 10px;
+    outline: none;
+  }
+
+  .nuke-input:focus { border-color: var(--red); }
+
+  .nuke-btn {
+    background: #1a0000;
+    border: 1px solid var(--red);
+    color: var(--red);
+    border-radius: 6px;
+    font-family: 'Space Mono', monospace;
+    font-size: 9px;
+    font-weight: 700;
+    padding: 8px 10px;
+    cursor: pointer;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    white-space: nowrap;
+  }
+
+  .nuke-btn:hover { background: #330000; }
+  .nuke-note { font-size: 9px; color: #441111; letter-spacing: 1px; }
+
+  /* Overlay modal */
+  .modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.85);
+    z-index: 300;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .modal-overlay.open { display: flex; }
+
+  .modal-box {
+    background: #0f0000;
+    border: 1px solid var(--red);
+    border-radius: 14px;
+    padding: 24px;
+    max-width: 320px;
+    width: 90%;
+    text-align: center;
+  }
+
+  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--red); letter-spacing: 2px; margin-bottom: 8px; }
+  .modal-msg { font-size: 11px; color: #cc4444; line-height: 1.6; margin-bottom: 20px; }
+  .modal-btns { display: flex; gap: 10px; }
+  .modal-btns button { flex: 1; }
 </style>
 </head>
 <body>
 
 <div class="container">
 
+  <!-- HOME VIEW -->
   <div class="view active" id="view-home">
     <div class="header">
       <h1>270 GRIND</h1>
-      <div class="subtitle" id="start-date-label">FAF Empire · Started May 30, 2026</div>
+      <div class="subtitle" id="start-date-label">FAF Empire</div>
     </div>
 
     <div class="stats-row">
@@ -523,9 +511,10 @@
       </div>
     </div>
 
-    <div class="milestones">
+    <!-- MILESTONES -->
+    <div class="card-section">
       <div class="section-header-row">
-        <div class="milestone-title">Milestones 🎯</div>
+        <div class="section-title">Milestones 🎯</div>
       </div>
       <div class="inline-add-form">
         <input class="income-input" id="milestone-new-text" type="text" placeholder="Add new milestone...">
@@ -533,8 +522,22 @@
       </div>
       <div id="milestones-list"></div>
     </div>
+
+    <!-- NUKE ZONE -->
+    <div class="nuke-zone">
+      <button class="nuke-toggle" onclick="toggleNuke()">⚙ system</button>
+      <div class="nuke-panel" id="nuke-panel">
+        <div class="nuke-title">⚠ Reset Everything</div>
+        <div class="nuke-row">
+          <input class="nuke-input" id="reset-date-input" type="date" title="New start date">
+          <button class="nuke-btn" onclick="confirmNuke()">NUKE & RESET</button>
+        </div>
+        <div class="nuke-note">Sets a new start date and wipes all data. Cannot be undone.</div>
+      </div>
+    </div>
   </div>
 
+  <!-- TODAY VIEW -->
   <div class="view" id="view-today">
     <div class="header">
       <h1 id="today-day-header">DAY 1</h1>
@@ -574,6 +577,7 @@
     </div>
   </div>
 
+  <!-- DAYS VIEW -->
   <div class="view" id="view-days">
     <div class="header">
       <h1>ALL DAYS</h1>
@@ -592,6 +596,7 @@
 
 </div>
 
+<!-- Bottom nav -->
 <div class="bottom-nav">
   <button class="nav-btn active" onclick="showView('home')" id="nav-home">
     <span class="nav-icon">🏠</span>HOME
@@ -606,8 +611,19 @@
 
 <div class="toast" id="toast"></div>
 
+<!-- Nuke confirmation modal -->
+<div class="modal-overlay" id="nuke-modal">
+  <div class="modal-box">
+    <div class="modal-title">⚠ NUKE?</div>
+    <div class="modal-msg">This will erase ALL data — days, income, tasks, milestones — and restart from the date you picked. There is no undo.</div>
+    <div class="modal-btns">
+      <button class="btn ghost" onclick="closeModal()">CANCEL</button>
+      <button class="btn red" onclick="executeNuke()">YES, NUKE IT</button>
+    </div>
+  </div>
+</div>
+
 <script>
-  const START_DATE = new Date(new Date().setHours(0,0,0,0));
   const TOTAL_DAYS = 270;
 
   const DEFAULT_MILESTONES = [
@@ -635,26 +651,44 @@
     { id: 't_5', text: 'Relaxed ONLY after all work done' }
   ];
 
+  // Default start = today at midnight
+  function todayMidnight() {
+    const d = new Date();
+    d.setHours(0,0,0,0);
+    return d.getTime();
+  }
+
+  let pendingNukeDate = null;
+
   let state = {
+    startTs: todayMidnight(),
     days: {},
     income: 0,
-    milestonesList: [...DEFAULT_MILESTONES],
-    dailyTasksList: [...DEFAULT_TASKS],
-    milestones: {},  
-    todayTasks: {},  
+    milestonesList: JSON.parse(JSON.stringify(DEFAULT_MILESTONES)),
+    dailyTasksList: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
+    milestones: {},
+    todayTasks: {},
     todayTasksDate: null
   };
 
-  function save() { localStorage.setItem('grind270_v3', JSON.stringify(state)); }
+  function save() { localStorage.setItem('grind270_v4', JSON.stringify(state)); }
 
   function load() {
-    const raw = localStorage.getItem('grind270_v3');
-    if (raw) { state = { ...state, ...JSON.parse(raw) }; }
+    const raw = localStorage.getItem('grind270_v4');
+    if (raw) {
+      try { state = { ...state, ...JSON.parse(raw) }; } catch(e) {}
+    }
+  }
+
+  function getStartDate() {
+    return new Date(state.startTs);
   }
 
   function getCurrentDay() {
     const now = new Date();
-    const diff = Math.floor((now - START_DATE) / 86400000) + 1;
+    now.setHours(0,0,0,0);
+    const start = getStartDate();
+    const diff = Math.floor((now - start) / 86400000) + 1;
     return Math.max(1, Math.min(diff, TOTAL_DAYS));
   }
 
@@ -683,8 +717,7 @@
     if (isNaN(val) || val <= 0) return;
     state.income += val;
     document.getElementById('income-input').value = '';
-    save();
-    render();
+    save(); render();
     showToast('+ ' + formatMoney(val) + ' added 💰');
   }
 
@@ -693,85 +726,124 @@
     if (isNaN(val) || val < 0) return;
     state.income = val;
     document.getElementById('income-input').value = '';
-    save();
-    render();
+    save(); render();
     showToast('Income set to ' + formatMoney(val));
   }
 
+  // ---- MILESTONES ----
   function addNewMilestone() {
     const txt = document.getElementById('milestone-new-text').value.trim();
     if (!txt) return;
-    const newId = 'm_' + Date.now();
-    state.milestonesList.push({ id: newId, text: txt });
+    state.milestonesList.push({ id: 'm_' + Date.now(), text: txt });
     document.getElementById('milestone-new-text').value = '';
-    save();
-    render();
-    showToast('Milestone Added');
+    save(); render();
+    showToast('Milestone added');
   }
 
-  function deleteMilestone(id, e) {
-    e.stopPropagation();
+  function deleteMilestone(id) {
     state.milestonesList = state.milestonesList.filter(m => m.id !== id);
     delete state.milestones[id];
-    save();
-    render();
-    showToast('Milestone Removed');
+    save(); render();
+    showToast('Milestone removed');
   }
 
+  function toggleMilestone(id) {
+    state.milestones[id] = !state.milestones[id];
+    save(); render();
+    if (state.milestones[id]) showToast('Milestone unlocked! 🎯');
+  }
+
+  let editingMilestone = null;
+
+  function startEditMilestone(id) {
+    editingMilestone = id;
+    render();
+    const input = document.getElementById('medit_' + id);
+    if (input) { input.focus(); input.select(); }
+  }
+
+  function saveEditMilestone(id) {
+    const input = document.getElementById('medit_' + id);
+    if (!input) return;
+    const txt = input.value.trim();
+    if (txt) {
+      const m = state.milestonesList.find(x => x.id === id);
+      if (m) m.text = txt;
+    }
+    editingMilestone = null;
+    save(); render();
+  }
+
+  function cancelEditMilestone() {
+    editingMilestone = null;
+    render();
+  }
+
+  // ---- TASKS ----
   function addNewTask() {
     const txt = document.getElementById('task-new-text').value.trim();
     if (!txt) return;
-    const newId = 't_' + Date.now();
-    state.dailyTasksList.push({ id: newId, text: txt });
+    state.dailyTasksList.push({ id: 't_' + Date.now(), text: txt });
     document.getElementById('task-new-text').value = '';
-    save();
-    render();
-    showToast('Task Added');
+    save(); render();
+    showToast('Task added');
   }
 
-  function deleteTask(id, e) {
-    e.stopPropagation();
+  function deleteTask(id) {
     state.dailyTasksList = state.dailyTasksList.filter(t => t.id !== id);
     delete state.todayTasks[id];
-    save();
-    render();
-    showToast('Task Removed');
+    save(); render();
+    showToast('Task removed');
   }
 
+  function toggleTask(taskId) {
+    const today = new Date().toDateString();
+    if (state.todayTasksDate !== today) { state.todayTasks = {}; state.todayTasksDate = today; }
+    state.todayTasks[taskId] = !state.todayTasks[taskId];
+    save(); render();
+  }
+
+  let editingTask = null;
+
+  function startEditTask(id) {
+    editingTask = id;
+    render();
+    const input = document.getElementById('tedit_' + id);
+    if (input) { input.focus(); input.select(); }
+  }
+
+  function saveEditTask(id) {
+    const input = document.getElementById('tedit_' + id);
+    if (!input) return;
+    const txt = input.value.trim();
+    if (txt) {
+      const t = state.dailyTasksList.find(x => x.id === id);
+      if (t) t.text = txt;
+    }
+    editingTask = null;
+    save(); render();
+  }
+
+  function cancelEditTask() {
+    editingTask = null;
+    render();
+  }
+
+  // ---- DAYS ----
   function toggleDay(dayNum) {
     const cur = state.days[dayNum];
     if (cur === 'complete') state.days[dayNum] = 'failed';
     else if (cur === 'failed') state.days[dayNum] = null;
     else state.days[dayNum] = 'complete';
-    save();
-    render();
+    save(); render();
   }
 
   function markToday() {
     const day = getCurrentDay();
     state.days[day] = 'complete';
     state.todayTasks = {};
-    save();
-    render();
-    showToast('Day ' + day + ' LOCKED IN ✅');
-  }
-
-  function toggleTask(taskId) {
-    const today = new Date().toDateString();
-    if (state.todayTasksDate !== today) {
-      state.todayTasks = {};
-      state.todayTasksDate = today;
-    }
-    state.todayTasks[taskId] = !state.todayTasks[taskId];
-    save();
-    render();
-  }
-
-  function toggleMilestone(id) {
-    state.milestones[id] = !state.milestones[id];
-    save();
-    render();
-    if (state.milestones[id]) showToast('Milestone unlocked! 🎯');
+    save(); render();
+    showToast('Day ' + day + ' locked in ✅');
   }
 
   function calcStreak() {
@@ -784,14 +856,55 @@
     return streak;
   }
 
+  // ---- NUKE ----
+  function toggleNuke() {
+    document.getElementById('nuke-panel').classList.toggle('visible');
+  }
+
+  function confirmNuke() {
+    const dateVal = document.getElementById('reset-date-input').value;
+    if (!dateVal) { showToast('Pick a start date first'); return; }
+    const parts = dateVal.split('-');
+    const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
+    d.setHours(0,0,0,0);
+    pendingNukeDate = d.getTime();
+    document.getElementById('nuke-modal').classList.add('open');
+  }
+
+  function closeModal() {
+    document.getElementById('nuke-modal').classList.remove('open');
+    pendingNukeDate = null;
+  }
+
+  function executeNuke() {
+    if (!pendingNukeDate) return;
+    state = {
+      startTs: pendingNukeDate,
+      days: {},
+      income: 0,
+      milestonesList: JSON.parse(JSON.stringify(DEFAULT_MILESTONES)),
+      dailyTasksList: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
+      milestones: {},
+      todayTasks: {},
+      todayTasksDate: null
+    };
+    pendingNukeDate = null;
+    closeModal();
+    document.getElementById('nuke-panel').classList.remove('visible');
+    save(); render();
+    showToast('Reset complete. Day 1 starts fresh.');
+  }
+
+  // ---- RENDER ----
   function render() {
     const day = getCurrentDay();
     const completed = Object.values(state.days).filter(v => v === 'complete').length;
     const streak = calcStreak();
     const pct = Math.round((completed / TOTAL_DAYS) * 100);
 
-    const options = { month: 'short', day: 'numeric', year: 'numeric' };
-    document.getElementById('start-date-label').textContent = 'FAF Empire · Started ' + START_DATE.toLocaleDateString('en-US', options);
+    const start = getStartDate();
+    const opts = { month: 'short', day: 'numeric', year: 'numeric' };
+    document.getElementById('start-date-label').textContent = 'FAF Empire · Started ' + start.toLocaleDateString('en-US', opts);
 
     document.getElementById('current-day-stat').textContent = day;
     document.getElementById('days-left-stat').textContent = Math.max(0, TOTAL_DAYS - day + 1);
@@ -807,22 +920,39 @@
                   'SCALE PHASE · Days 181–270 · 8 hrs/day';
     document.getElementById('today-phase-label').textContent = phase;
 
+    // Today checklist
     const todayStr = new Date().toDateString();
     if (state.todayTasksDate !== todayStr) state.todayTasks = {};
     const cl = document.getElementById('daily-checklist');
-    
+
     if (state.dailyTasksList.length === 0) {
-      cl.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:12px 0;">No items on your checklist. Add one above!</div>`;
+      cl.innerHTML = `<div style="font-size:11px;color:var(--muted);text-align:center;padding:12px 0">No tasks yet. Add one above.</div>`;
     } else {
-      cl.innerHTML = state.dailyTasksList.map(t => `
-        <div class="checklist-item ${state.todayTasks[t.id] ? 'checked' : ''}">
-          <div class="checklist-interactive-area" onclick="toggleTask('${t.id}')">
-            <div class="check-box">${state.todayTasks[t.id] ? '✓' : ''}</div>
-            <div class="check-label">${t.text}</div>
-          </div>
-          <div class="delete-icon" onclick="deleteTask('${t.id}', event)">✕</div>
-        </div>
-      `).join('');
+      cl.innerHTML = state.dailyTasksList.map(t => {
+        const isEditing = editingTask === t.id;
+        const isChecked = !!state.todayTasks[t.id];
+        if (isEditing) {
+          return `
+            <div class="checklist-item">
+              <input class="item-edit-input" id="tedit_${t.id}" value="${escHtml(t.text)}" onkeydown="if(event.key==='Enter')saveEditTask('${t.id}');if(event.key==='Escape')cancelEditTask()">
+              <div class="item-actions">
+                <button class="icon-btn save" onclick="saveEditTask('${t.id}')">✓</button>
+                <button class="icon-btn del" onclick="cancelEditTask()">✕</button>
+              </div>
+            </div>`;
+        }
+        return `
+          <div class="checklist-item ${isChecked ? 'checked' : ''}">
+            <div class="checklist-interactive" onclick="toggleTask('${t.id}')">
+              <div class="check-box">${isChecked ? '✓' : ''}</div>
+              <div class="check-label">${escHtml(t.text)}</div>
+            </div>
+            <div class="item-actions">
+              <button class="icon-btn edit" onclick="startEditTask('${t.id}')">✎</button>
+              <button class="icon-btn del" onclick="deleteTask('${t.id}')">✕</button>
+            </div>
+          </div>`;
+      }).join('');
     }
 
     const btn = document.getElementById('mark-day-btn');
@@ -830,43 +960,81 @@
     btn.textContent = todayDone ? '✅ DAY ' + day + ' COMPLETE' : '✅ MARK DAY COMPLETE';
     btn.style.opacity = todayDone ? '0.5' : '1';
 
+    // Milestones
     const mlContainer = document.getElementById('milestones-list');
     if (state.milestonesList.length === 0) {
-      mlContainer.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:12px 0;">No milestones configured. Create one above!</div>`;
+      mlContainer.innerHTML = `<div style="font-size:11px;color:var(--muted);text-align:center;padding:12px 0">No milestones. Add one above.</div>`;
     } else {
-      mlContainer.innerHTML = state.milestonesList.map(m => `
-        <div class="milestone ${state.milestones[m.id] ? 'done' : ''}">
-          <div class="milestone-interactive-area" onclick="toggleMilestone('${m.id}')">
-            <div class="milestone-check">${state.milestones[m.id] ? '✓' : ''}</div>
-            <div class="milestone-text">${m.text}</div>
-          </div>
-          <div class="delete-icon" onclick="deleteMilestone('${m.id}', event)">✕</div>
-        </div>
-      `).join('');
+      mlContainer.innerHTML = state.milestonesList.map(m => {
+        const isEditing = editingMilestone === m.id;
+        const isDone = !!state.milestones[m.id];
+        if (isEditing) {
+          return `
+            <div class="list-item">
+              <input class="item-edit-input" id="medit_${m.id}" value="${escHtml(m.text)}" onkeydown="if(event.key==='Enter')saveEditMilestone('${m.id}');if(event.key==='Escape')cancelEditMilestone()">
+              <div class="item-actions">
+                <button class="icon-btn save" onclick="saveEditMilestone('${m.id}')">✓</button>
+                <button class="icon-btn del" onclick="cancelEditMilestone()">✕</button>
+              </div>
+            </div>`;
+        }
+        return `
+          <div class="list-item ${isDone ? 'done' : ''}">
+            <div class="item-interactive" onclick="toggleMilestone('${m.id}')">
+              <div class="item-check">${isDone ? '✓' : ''}</div>
+              <div class="item-text">${escHtml(m.text)}</div>
+            </div>
+            <div class="item-actions">
+              <button class="icon-btn edit" onclick="startEditMilestone('${m.id}')">✎</button>
+              <button class="icon-btn del" onclick="deleteMilestone('${m.id}')">✕</button>
+            </div>
+          </div>`;
+      }).join('');
     }
 
-    ['phase1','phase2','phase3'].forEach((phase, pi) => {
+    // Day grids
+    ['phase1','phase2','phase3'].forEach((ph, pi) => {
       const start = pi * 90 + 1;
       const end = start + 89;
       let html = '';
       for (let d = start; d <= end; d++) {
         const status = state.days[d];
         const isToday = d === day;
-        const cls = [
-          'day-dot',
-          status === 'complete' ? 'complete' : '',
-          status === 'failed' ? 'failed' : '',
-          isToday ? 'today' : ''
-        ].filter(Boolean).join(' ');
-        const displayLabel = d <= day ? (status === 'complete' ? '✓' : status === 'failed' ? '✗' : d) : '';
-        html += `<div class="${cls}" onclick="toggleDay(${d})" title="Day ${d}">${displayLabel}</div>`;
+        const cls = ['day-dot', status === 'complete' ? 'complete' : '', status === 'failed' ? 'failed' : '', isToday ? 'today' : ''].filter(Boolean).join(' ');
+        const lbl = d <= day ? (status === 'complete' ? '✓' : status === 'failed' ? '✗' : d) : '';
+        html += `<div class="${cls}" onclick="toggleDay(${d})" title="Day ${d}">${lbl}</div>`;
       }
-      document.getElementById('grid-' + phase).innerHTML = html;
+      document.getElementById('grid-' + ph).innerHTML = html;
     });
   }
 
+  function escHtml(str) {
+    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+  }
+
+  // Set today's date as default for reset input
+  function initDateInput() {
+    const d = new Date();
+    const y = d.getFullYear();
+    const m = String(d.getMonth()+1).padStart(2,'0');
+    const day = String(d.getDate()).padStart(2,'0');
+    document.getElementById('reset-date-input').value = `${y}-${m}-${day}`;
+  }
+
+  // Auto-advance day at midnight
+  function scheduleMidnightCheck() {
+    const now = new Date();
+    const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 0, 0, 0) - now;
+    setTimeout(() => {
+      render();
+      scheduleMidnightCheck();
+    }, msUntilMidnight + 100);
+  }
+
   load();
+  initDateInput();
   render();
+  scheduleMidnightCheck();
 </script>
 </body>
 </html>
