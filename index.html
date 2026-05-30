@@ -30,7 +30,6 @@
     overflow-x: hidden;
   }
 
-  /* GRAIN OVERLAY */
   body::before {
     content: '';
     position: fixed;
@@ -43,7 +42,6 @@
 
   .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
 
-  /* HEADER */
   .header {
     text-align: center;
     padding: 24px 0 20px;
@@ -70,7 +68,6 @@
     margin-top: 6px;
   }
 
-  /* STATS ROW */
   .stats-row {
     display: grid;
     grid-template-columns: 1fr 1fr;
@@ -104,7 +101,6 @@
 
   .stat-value.green { color: var(--green); }
 
-  /* PROGRESS BAR */
   .progress-section {
     background: var(--card);
     border: 1px solid var(--border);
@@ -137,7 +133,6 @@
     transition: width 0.5s ease;
   }
 
-  /* INCOME SECTION */
   .income-section {
     background: var(--card);
     border: 1px solid var(--border);
@@ -199,9 +194,8 @@
 
   .btn:active { opacity: 0.7; }
   .btn.red { background: var(--red); color: #fff; }
-  .btn.sm { padding: 6px 10px; font-size: 9px; }
+  .btn.sm { padding: 10px 14px; font-size: 11px; border-radius: 8px; }
 
-  /* LIST BUILDERS / MANAGERS */
   .section-header-row {
     display: flex;
     justify-content: space-between;
@@ -211,11 +205,10 @@
 
   .inline-add-form {
     display: flex;
-    gap: 6px;
-    margin-bottom: 12px;
+    gap: 8px;
+    margin-bottom: 16px;
   }
 
-  /* MILESTONES */
   .milestones {
     background: var(--card);
     border: 1px solid var(--border);
@@ -234,7 +227,7 @@
   .milestone {
     display: flex;
     align-items: center;
-    gap: 10px;
+    justify-content: space-between;
     padding: 8px 0;
     border-bottom: 1px solid var(--border);
     font-size: 11px;
@@ -275,14 +268,13 @@
   .delete-icon {
     color: var(--red);
     cursor: pointer;
-    font-size: 12px;
-    padding: 4px 8px;
-    opacity: 0.4;
+    font-size: 14px;
+    padding: 2px 8px;
+    opacity: 0.5;
     transition: opacity 0.2s;
   }
   .delete-icon:hover { opacity: 1; }
 
-  /* DAY GRID */
   .days-section {
     background: var(--card);
     border: 1px solid var(--border);
@@ -317,7 +309,6 @@
   .day-dot.today { border-color: var(--gold); box-shadow: 0 0 6px var(--gold); }
   .day-dot:active { transform: scale(0.85); }
 
-  /* PHASE HEADERS */
   .phase-header {
     font-family: 'Bebas Neue', sans-serif;
     font-size: 13px;
@@ -328,7 +319,6 @@
     border-top: 1px solid var(--border);
   }
 
-  /* TODAY SECTION */
   .today-section {
     background: var(--card);
     border: 1px solid var(--green);
@@ -393,7 +383,6 @@
     margin-top: 16px;
   }
 
-  /* PROJECTIONS */
   .projections {
     background: var(--card);
     border: 1px solid var(--border);
@@ -427,7 +416,6 @@
   .proj-amount.high { color: var(--gold); }
   .proj-amount.vhigh { color: var(--green); }
 
-  /* BOTTOM NAV */
   .bottom-nav {
     position: fixed;
     bottom: 0;
@@ -461,11 +449,9 @@
   .nav-btn.active { color: var(--gold); }
   .nav-icon { font-size: 18px; }
 
-  /* VIEWS */
   .view { display: none; }
   .view.active { display: block; }
 
-  /* TOAST */
   .toast {
     position: fixed;
     bottom: 80px;
@@ -492,9 +478,7 @@
 
 <div class="container">
 
-  <!-- HOME VIEW -->
   <div class="view active" id="view-home">
-
     <div class="header">
       <h1>270 GRIND</h1>
       <div class="subtitle" id="start-date-label">FAF Empire · Started May 30, 2026</div>
@@ -543,20 +527,15 @@
       <div class="section-header-row">
         <div class="milestone-title">Milestones 🎯</div>
       </div>
-      
       <div class="inline-add-form">
-        <input class="income-input" id="milestone-new-text" type="text" placeholder="Add new milestone target...">
+        <input class="income-input" id="milestone-new-text" type="text" placeholder="Add new milestone...">
         <button class="btn sm" onclick="addNewMilestone()">+ ADD</button>
       </div>
-
       <div id="milestones-list"></div>
     </div>
-
   </div>
 
-  <!-- TODAY VIEW -->
   <div class="view" id="view-today">
-
     <div class="header">
       <h1 id="today-day-header">DAY 1</h1>
       <div class="subtitle" id="today-phase-label">GRIND PHASE · Days 1–90</div>
@@ -566,12 +545,10 @@
       <div class="section-header-row">
         <div class="today-title">Daily Checklist ✓</div>
       </div>
-
       <div class="inline-add-form">
-        <input class="income-input" id="task-new-text" type="text" placeholder="Add new repeatable task...">
+        <input class="income-input" id="task-new-text" type="text" placeholder="Add new task...">
         <button class="btn sm" onclick="addNewTask()">+ ADD</button>
       </div>
-
       <div id="daily-checklist"></div>
       <button class="btn mark-day-btn" id="mark-day-btn" onclick="markToday()">✅ MARK DAY COMPLETE</button>
     </div>
@@ -595,12 +572,9 @@
         <span class="proj-amount vhigh">$600K+</span>
       </div>
     </div>
-
   </div>
 
-  <!-- DAYS VIEW -->
   <div class="view" id="view-days">
-
     <div class="header">
       <h1>ALL DAYS</h1>
       <div class="subtitle">Tap a day to toggle ✅ / ❌</div>
@@ -609,19 +583,15 @@
     <div class="days-section">
       <div class="phase-header">⚡ PHASE 1 — GRIND (Days 1–90)</div>
       <div class="day-grid" id="grid-phase1"></div>
-
       <div class="phase-header">📈 PHASE 2 — GROWTH (Days 91–180)</div>
       <div class="day-grid" id="grid-phase2"></div>
-
       <div class="phase-header">🚀 PHASE 3 — SCALE (Days 181–270)</div>
       <div class="day-grid" id="grid-phase3"></div>
     </div>
-
   </div>
 
 </div>
 
-<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="nav-btn active" onclick="showView('home')" id="nav-home">
     <span class="nav-icon">🏠</span>HOME
@@ -640,7 +610,6 @@
   const START_DATE = new Date(new Date().setHours(0,0,0,0));
   const TOTAL_DAYS = 270;
 
-  // FALLBACK INITIAL DATA SETS
   const DEFAULT_MILESTONES = [
     { id: 'm_1', text: '📁 10 FOIA requests filed' },
     { id: 'm_2', text: '📁 100 FOIA requests filed' },
@@ -655,7 +624,7 @@
     { id: 'm_11', text: '💰 First $5,000 month' },
     { id: 'm_12', text: '📋 Nevada LLC formed' },
     { id: 'm_13', text: '🏦 $20,000 saved' },
-    { id: 'm_14', text: '🏠 Moved to Henderson, NV' },
+    { id: 'm_14', text: '🏠 Moved to Henderson, NV' }
   ];
 
   const DEFAULT_TASKS = [
@@ -663,10 +632,9 @@
     { id: 't_2', text: 'Swing trading study (1–2 hrs + notes)' },
     { id: 't_3', text: 'FAF editing/production work' },
     { id: 't_4', text: 'Analytics & content optimization' },
-    { id: 't_5', text: 'Relaxed ONLY after all work done' },
+    { id: 't_5', text: 'Relaxed ONLY after all work done' }
   ];
 
-  // CONTAINER STATE
   let state = {
     days: {},
     income: 0,
@@ -674,17 +642,14 @@
     dailyTasksList: [...DEFAULT_TASKS],
     milestones: {},  
     todayTasks: {},  
-    todayTasksDate: null,
+    todayTasksDate: null
   };
 
-  function save() { localStorage.setItem('grind270_v2', JSON.stringify(state)); }
+  function save() { localStorage.setItem('grind270_v3', JSON.stringify(state)); }
 
   function load() {
-    const raw = localStorage.getItem('grind270_v2');
-    if (raw) {
-      const parsed = JSON.parse(raw);
-      state = { ...state, ...parsed };
-    }
+    const raw = localStorage.getItem('grind270_v3');
+    if (raw) { state = { ...state, ...JSON.parse(raw) }; }
   }
 
   function getCurrentDay() {
@@ -733,7 +698,6 @@
     showToast('Income set to ' + formatMoney(val));
   }
 
-  // MANAGING LIST ELEMENTS DIRECTLY
   function addNewMilestone() {
     const txt = document.getElementById('milestone-new-text').value.trim();
     if (!txt) return;
@@ -742,7 +706,7 @@
     document.getElementById('milestone-new-text').value = '';
     save();
     render();
-    showToast('Milestone Target Added');
+    showToast('Milestone Added');
   }
 
   function deleteMilestone(id, e) {
@@ -762,7 +726,7 @@
     document.getElementById('task-new-text').value = '';
     save();
     render();
-    showToast('Checklist Item Added');
+    showToast('Task Added');
   }
 
   function deleteTask(id, e) {
@@ -771,7 +735,7 @@
     delete state.todayTasks[id];
     save();
     render();
-    showToast('Checklist Item Removed');
+    showToast('Task Removed');
   }
 
   function toggleDay(dayNum) {
@@ -829,7 +793,6 @@
     const options = { month: 'short', day: 'numeric', year: 'numeric' };
     document.getElementById('start-date-label').textContent = 'FAF Empire · Started ' + START_DATE.toLocaleDateString('en-US', options);
 
-    // Stats
     document.getElementById('current-day-stat').textContent = day;
     document.getElementById('days-left-stat').textContent = Math.max(0, TOTAL_DAYS - day + 1);
     document.getElementById('streak-stat').textContent = streak;
@@ -838,16 +801,14 @@
     document.getElementById('progress-fill').style.width = pct + '%';
     document.getElementById('income-display').textContent = formatMoney(state.income);
 
-    // Today header
     document.getElementById('today-day-header').textContent = 'DAY ' + day;
     const phase = day <= 90 ? 'GRIND PHASE · Days 1–90 · 10 hrs/day' :
                   day <= 180 ? 'GROWTH PHASE · Days 91–180 · 8 hrs/day' :
                   'SCALE PHASE · Days 181–270 · 8 hrs/day';
     document.getElementById('today-phase-label').textContent = phase;
 
-    // Today dynamic checklist items
-    const today = new Date().toDateString();
-    if (state.todayTasksDate !== today) state.todayTasks = {};
+    const todayStr = new Date().toDateString();
+    if (state.todayTasksDate !== todayStr) state.todayTasks = {};
     const cl = document.getElementById('daily-checklist');
     
     if (state.dailyTasksList.length === 0) {
@@ -869,7 +830,6 @@
     btn.textContent = todayDone ? '✅ DAY ' + day + ' COMPLETE' : '✅ MARK DAY COMPLETE';
     btn.style.opacity = todayDone ? '0.5' : '1';
 
-    // Dynamic milestones layout
     const mlContainer = document.getElementById('milestones-list');
     if (state.milestonesList.length === 0) {
       mlContainer.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:12px 0;">No milestones configured. Create one above!</div>`;
@@ -885,7 +845,6 @@
       `).join('');
     }
 
-    // Day grid assembly loops
     ['phase1','phase2','phase3'].forEach((phase, pi) => {
       const start = pi * 90 + 1;
       const end = start + 89;
