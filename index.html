@@ -70,14 +70,6 @@
     margin-top: 6px;
   }
 
-  .motto {
-    font-size: 11px;
-    color: var(--green);
-    letter-spacing: 1px;
-    margin-top: 10px;
-    font-style: italic;
-  }
-
   /* STATS ROW */
   .stats-row {
     display: grid;
@@ -93,8 +85,6 @@
     padding: 16px;
     text-align: center;
   }
-
-  .stat-card.full { grid-column: 1 / -1; }
 
   .stat-label {
     font-size: 9px;
@@ -113,7 +103,6 @@
   }
 
   .stat-value.green { color: var(--green); }
-  .stat-value.money { font-size: 28px; color: var(--green); }
 
   /* PROGRESS BAR */
   .progress-section {
@@ -209,7 +198,22 @@
   }
 
   .btn:active { opacity: 0.7; }
-  .btn.red { background: var(--red); }
+  .btn.red { background: var(--red); color: #fff; }
+  .btn.sm { padding: 6px 10px; font-size: 9px; }
+
+  /* LIST BUILDERS / MANAGERS */
+  .section-header-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 12px;
+  }
+
+  .inline-add-form {
+    display: flex;
+    gap: 6px;
+    margin-bottom: 12px;
+  }
 
   /* MILESTONES */
   .milestones {
@@ -225,7 +229,6 @@
     letter-spacing: 2px;
     color: var(--muted);
     text-transform: uppercase;
-    margin-bottom: 12px;
   }
 
   .milestone {
@@ -235,10 +238,17 @@
     padding: 8px 0;
     border-bottom: 1px solid var(--border);
     font-size: 11px;
-    cursor: pointer;
   }
 
   .milestone:last-child { border-bottom: none; }
+
+  .milestone-interactive-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    cursor: pointer;
+  }
 
   .milestone-check {
     width: 18px;
@@ -262,6 +272,16 @@
   .milestone.done .milestone-text { color: var(--muted); text-decoration: line-through; }
   .milestone-text { flex: 1; color: var(--text); }
 
+  .delete-icon {
+    color: var(--red);
+    cursor: pointer;
+    font-size: 12px;
+    padding: 4px 8px;
+    opacity: 0.4;
+    transition: opacity 0.2s;
+  }
+  .delete-icon:hover { opacity: 1; }
+
   /* DAY GRID */
   .days-section {
     background: var(--card);
@@ -269,26 +289,6 @@
     border-radius: 12px;
     padding: 16px;
     margin-bottom: 20px;
-  }
-
-  .days-title {
-    font-size: 9px;
-    letter-spacing: 2px;
-    color: var(--muted);
-    text-transform: uppercase;
-    margin-bottom: 14px;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-  }
-
-  .phase-label {
-    font-size: 8px;
-    background: var(--gold);
-    color: #000;
-    padding: 2px 6px;
-    border-radius: 4px;
-    letter-spacing: 1px;
   }
 
   .day-grid {
@@ -342,19 +342,25 @@
     letter-spacing: 2px;
     color: var(--green);
     text-transform: uppercase;
-    margin-bottom: 12px;
   }
 
   .checklist-item {
     display: flex;
-    align-items: flex-start;
-    gap: 10px;
+    align-items: center;
+    justify-content: space-between;
     padding: 8px 0;
     border-bottom: 1px solid var(--border);
-    cursor: pointer;
   }
 
   .checklist-item:last-child { border-bottom: none; }
+
+  .checklist-interactive-area {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex: 1;
+    cursor: pointer;
+  }
 
   .check-box {
     width: 20px;
@@ -366,7 +372,6 @@
     justify-content: center;
     flex-shrink: 0;
     font-size: 11px;
-    margin-top: 1px;
     transition: all 0.2s;
   }
 
@@ -377,7 +382,6 @@
   }
 
   .checklist-item.checked .check-label { color: var(--muted); text-decoration: line-through; }
-
   .check-label { font-size: 12px; line-height: 1.4; }
 
   .mark-day-btn {
@@ -482,25 +486,18 @@
   }
 
   .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
-
-  /* STREAK */
-  .streak-fire {
-    font-size: 11px;
-    color: var(--gold);
-    margin-left: 6px;
-  }
 </style>
 </head>
 <body>
 
 <div class="container">
 
+  <!-- HOME VIEW -->
   <div class="view active" id="view-home">
 
     <div class="header">
       <h1>270 GRIND</h1>
       <div class="subtitle" id="start-date-label">FAF Empire · Started May 30, 2026</div>
-      <div class="motto">"No one is gonna save me from poverty. I gotta do it."</div>
     </div>
 
     <div class="stats-row">
@@ -543,22 +540,38 @@
     </div>
 
     <div class="milestones">
-      <div class="milestone-title">Milestones 🎯</div>
+      <div class="section-header-row">
+        <div class="milestone-title">Milestones 🎯</div>
+      </div>
+      
+      <div class="inline-add-form">
+        <input class="income-input" id="milestone-new-text" type="text" placeholder="Add new milestone target...">
+        <button class="btn sm" onclick="addNewMilestone()">+ ADD</button>
+      </div>
+
       <div id="milestones-list"></div>
     </div>
 
   </div>
 
+  <!-- TODAY VIEW -->
   <div class="view" id="view-today">
 
     <div class="header">
       <h1 id="today-day-header">DAY 1</h1>
       <div class="subtitle" id="today-phase-label">GRIND PHASE · Days 1–90</div>
-      <div class="motto">10 hrs/day. No days off. Build the foundation.</div>
     </div>
 
     <div class="today-section">
-      <div class="today-title">Daily Checklist ✓</div>
+      <div class="section-header-row">
+        <div class="today-title">Daily Checklist ✓</div>
+      </div>
+
+      <div class="inline-add-form">
+        <input class="income-input" id="task-new-text" type="text" placeholder="Add new repeatable task...">
+        <button class="btn sm" onclick="addNewTask()">+ ADD</button>
+      </div>
+
       <div id="daily-checklist"></div>
       <button class="btn mark-day-btn" id="mark-day-btn" onclick="markToday()">✅ MARK DAY COMPLETE</button>
     </div>
@@ -585,6 +598,7 @@
 
   </div>
 
+  <!-- DAYS VIEW -->
   <div class="view" id="view-days">
 
     <div class="header">
@@ -607,6 +621,7 @@
 
 </div>
 
+<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="nav-btn active" onclick="showView('home')" id="nav-home">
     <span class="nav-icon">🏠</span>HOME
@@ -622,49 +637,54 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  // Dynamically targets today's actual system date as Day 1
   const START_DATE = new Date(new Date().setHours(0,0,0,0));
   const TOTAL_DAYS = 270;
 
-  const MILESTONES = [
-    { id: 'foia10', text: '10 FOIA requests filed', icon: '📁' },
-    { id: 'foia100', text: '100 FOIA requests filed', icon: '📁' },
-    { id: 'firstupload', text: 'First FAF video uploaded', icon: '🎬' },
-    { id: 'sub100', text: '100 subscribers', icon: '👥' },
-    { id: 'sub500', text: '500 subscribers', icon: '👥' },
-    { id: 'sub1k', text: '1,000 subscribers', icon: '👥' },
-    { id: 'hours4k', text: '4,000 watch hours hit', icon: '⏱️' },
-    { id: 'adsense', text: 'AdSense application submitted', icon: '💳' },
-    { id: 'first100', text: 'First $100 earned', icon: '💵' },
-    { id: 'first1k', text: 'First $1,000 month', icon: '💰' },
-    { id: 'first5k', text: 'First $5,000 month', icon: '💰' },
-    { id: 'llc', text: 'Nevada LLC formed', icon: '📋' },
-    { id: 'saved20k', text: '$20,000 saved', icon: '🏦' },
-    { id: 'move', text: 'Moved to Henderson, NV', icon: '🏠' },
+  // FALLBACK INITIAL DATA SETS
+  const DEFAULT_MILESTONES = [
+    { id: 'm_1', text: '📁 10 FOIA requests filed' },
+    { id: 'm_2', text: '📁 100 FOIA requests filed' },
+    { id: 'm_3', text: '🎬 First FAF video uploaded' },
+    { id: 'm_4', text: '👥 100 subscribers' },
+    { id: 'm_5', text: '👥 500 subscribers' },
+    { id: 'm_6', text: '👥 1,000 subscribers' },
+    { id: 'm_7', text: '⏱️ 4,000 watch hours hit' },
+    { id: 'm_8', text: '💳 AdSense application submitted' },
+    { id: 'm_9', text: '💵 First $100 earned' },
+    { id: 'm_10', text: '💰 First $1,000 month' },
+    { id: 'm_11', text: '💰 First $5,000 month' },
+    { id: 'm_12', text: '📋 Nevada LLC formed' },
+    { id: 'm_13', text: '🏦 $20,000 saved' },
+    { id: 'm_14', text: '🏠 Moved to Henderson, NV' },
   ];
 
-  const DAILY_TASKS = [
-    { id: 'foia', text: '10 FOIA requests filed' },
-    { id: 'trading', text: 'Swing trading study (1–2 hrs + notes)' },
-    { id: 'faf', text: 'FAF editing/production work' },
-    { id: 'analytics', text: 'Analytics & content optimization' },
-    { id: 'nowork', text: 'Relaxed ONLY after all work done' },
+  const DEFAULT_TASKS = [
+    { id: 't_1', text: '10 FOIA requests filed' },
+    { id: 't_2', text: 'Swing trading study (1–2 hrs + notes)' },
+    { id: 't_3', text: 'FAF editing/production work' },
+    { id: 't_4', text: 'Analytics & content optimization' },
+    { id: 't_5', text: 'Relaxed ONLY after all work done' },
   ];
 
-  // STATE
+  // CONTAINER STATE
   let state = {
-    days: {},        // { 1: 'complete' | 'failed' | null }
+    days: {},
     income: 0,
-    milestones: {},  // { id: true }
-    todayTasks: {},  // { taskId: true } — resets each calendar day
+    milestonesList: [...DEFAULT_MILESTONES],
+    dailyTasksList: [...DEFAULT_TASKS],
+    milestones: {},  
+    todayTasks: {},  
     todayTasksDate: null,
   };
 
-  function save() { localStorage.setItem('grind270', JSON.stringify(state)); }
+  function save() { localStorage.setItem('grind270_v2', JSON.stringify(state)); }
 
   function load() {
-    const raw = localStorage.getItem('grind270');
-    if (raw) state = { ...state, ...JSON.parse(raw) };
+    const raw = localStorage.getItem('grind270_v2');
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      state = { ...state, ...parsed };
+    }
   }
 
   function getCurrentDay() {
@@ -711,6 +731,47 @@
     save();
     render();
     showToast('Income set to ' + formatMoney(val));
+  }
+
+  // MANAGING LIST ELEMENTS DIRECTLY
+  function addNewMilestone() {
+    const txt = document.getElementById('milestone-new-text').value.trim();
+    if (!txt) return;
+    const newId = 'm_' + Date.now();
+    state.milestonesList.push({ id: newId, text: txt });
+    document.getElementById('milestone-new-text').value = '';
+    save();
+    render();
+    showToast('Milestone Target Added');
+  }
+
+  function deleteMilestone(id, e) {
+    e.stopPropagation();
+    state.milestonesList = state.milestonesList.filter(m => m.id !== id);
+    delete state.milestones[id];
+    save();
+    render();
+    showToast('Milestone Removed');
+  }
+
+  function addNewTask() {
+    const txt = document.getElementById('task-new-text').value.trim();
+    if (!txt) return;
+    const newId = 't_' + Date.now();
+    state.dailyTasksList.push({ id: newId, text: txt });
+    document.getElementById('task-new-text').value = '';
+    save();
+    render();
+    showToast('Checklist Item Added');
+  }
+
+  function deleteTask(id, e) {
+    e.stopPropagation();
+    state.dailyTasksList = state.dailyTasksList.filter(t => t.id !== id);
+    delete state.todayTasks[id];
+    save();
+    render();
+    showToast('Checklist Item Removed');
   }
 
   function toggleDay(dayNum) {
@@ -765,7 +826,6 @@
     const streak = calcStreak();
     const pct = Math.round((completed / TOTAL_DAYS) * 100);
 
-    // Dynamic label for text UI header matching calculated start date
     const options = { month: 'short', day: 'numeric', year: 'numeric' };
     document.getElementById('start-date-label').textContent = 'FAF Empire · Started ' + START_DATE.toLocaleDateString('en-US', options);
 
@@ -785,31 +845,47 @@
                   'SCALE PHASE · Days 181–270 · 8 hrs/day';
     document.getElementById('today-phase-label').textContent = phase;
 
-    // Today tasks
+    // Today dynamic checklist items
     const today = new Date().toDateString();
     if (state.todayTasksDate !== today) state.todayTasks = {};
     const cl = document.getElementById('daily-checklist');
-    cl.innerHTML = DAILY_TASKS.map(t => `
-      <div class="checklist-item ${state.todayTasks[t.id] ? 'checked' : ''}" onclick="toggleTask('${t.id}')">
-        <div class="check-box">${state.todayTasks[t.id] ? '✓' : ''}</div>
-        <div class="check-label">${t.text}</div>
-      </div>
-    `).join('');
+    
+    if (state.dailyTasksList.length === 0) {
+      cl.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:12px 0;">No items on your checklist. Add one above!</div>`;
+    } else {
+      cl.innerHTML = state.dailyTasksList.map(t => `
+        <div class="checklist-item ${state.todayTasks[t.id] ? 'checked' : ''}">
+          <div class="checklist-interactive-area" onclick="toggleTask('${t.id}')">
+            <div class="check-box">${state.todayTasks[t.id] ? '✓' : ''}</div>
+            <div class="check-label">${t.text}</div>
+          </div>
+          <div class="delete-icon" onclick="deleteTask('${t.id}', event)">✕</div>
+        </div>
+      `).join('');
+    }
 
     const btn = document.getElementById('mark-day-btn');
     const todayDone = state.days[day] === 'complete';
     btn.textContent = todayDone ? '✅ DAY ' + day + ' COMPLETE' : '✅ MARK DAY COMPLETE';
     btn.style.opacity = todayDone ? '0.5' : '1';
 
-    // Milestones
-    document.getElementById('milestones-list').innerHTML = MILESTONES.map(m => `
-      <div class="milestone ${state.milestones[m.id] ? 'done' : ''}" onclick="toggleMilestone('${m.id}')">
-        <div class="milestone-check">${state.milestones[m.id] ? '✓' : ''}</div>
-        <div class="milestone-text">${m.icon} ${m.text}</div>
-      </div>
-    `).join('');
+    // Dynamic milestones layout
+    const mlContainer = document.getElementById('milestones-list');
+    if (state.milestonesList.length === 0) {
+      mlContainer.innerHTML = `<div style="font-size:11px; color:var(--muted); text-align:center; padding:12px 0;">No milestones configured. Create one above!</div>`;
+    } else {
+      mlContainer.innerHTML = state.milestonesList.map(m => `
+        <div class="milestone ${state.milestones[m.id] ? 'done' : ''}">
+          <div class="milestone-interactive-area" onclick="toggleMilestone('${m.id}')">
+            <div class="milestone-check">${state.milestones[m.id] ? '✓' : ''}</div>
+            <div class="milestone-text">${m.text}</div>
+          </div>
+          <div class="delete-icon" onclick="deleteMilestone('${m.id}', event)">✕</div>
+        </div>
+      `).join('');
+    }
 
-    // Day grids - fixed literal variable mapping inside the loop string
+    // Day grid assembly loops
     ['phase1','phase2','phase3'].forEach((phase, pi) => {
       const start = pi * 90 + 1;
       const end = start + 89;
