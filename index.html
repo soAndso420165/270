@@ -495,12 +495,11 @@
 
 <div class="container">
 
-  <!-- HOME VIEW -->
   <div class="view active" id="view-home">
 
     <div class="header">
       <h1>270 GRIND</h1>
-      <div class="subtitle">FAF Empire · Started May 19, 2026</div>
+      <div class="subtitle" id="start-date-label">FAF Empire · Started May 30, 2026</div>
       <div class="motto">"No one is gonna save me from poverty. I gotta do it."</div>
     </div>
 
@@ -550,7 +549,6 @@
 
   </div>
 
-  <!-- TODAY VIEW -->
   <div class="view" id="view-today">
 
     <div class="header">
@@ -587,7 +585,6 @@
 
   </div>
 
-  <!-- DAYS VIEW -->
   <div class="view" id="view-days">
 
     <div class="header">
@@ -610,7 +607,6 @@
 
 </div>
 
-<!-- BOTTOM NAV -->
 <div class="bottom-nav">
   <button class="nav-btn active" onclick="showView('home')" id="nav-home">
     <span class="nav-icon">🏠</span>HOME
@@ -626,7 +622,8 @@
 <div class="toast" id="toast"></div>
 
 <script>
-  const START_DATE = new Date('2026-05-19');
+  // Dynamically targets today's actual system date as Day 1
+  const START_DATE = new Date(new Date().setHours(0,0,0,0));
   const TOTAL_DAYS = 270;
 
   const MILESTONES = [
@@ -728,9 +725,7 @@
   function markToday() {
     const day = getCurrentDay();
     state.days[day] = 'complete';
-    // reset today tasks
     state.todayTasks = {};
-    Object.keys(state.todayTasks);
     save();
     render();
     showToast('Day ' + day + ' LOCKED IN ✅');
@@ -770,6 +765,10 @@
     const streak = calcStreak();
     const pct = Math.round((completed / TOTAL_DAYS) * 100);
 
+    // Dynamic label for text UI header matching calculated start date
+    const options = { month: 'short', day: 'numeric', year: 'numeric' };
+    document.getElementById('start-date-label').textContent = 'FAF Empire · Started ' + START_DATE.toLocaleDateString('en-US', options);
+
     // Stats
     document.getElementById('current-day-stat').textContent = day;
     document.getElementById('days-left-stat').textContent = Math.max(0, TOTAL_DAYS - day + 1);
@@ -797,7 +796,6 @@
       </div>
     `).join('');
 
-    const allDone = DAILY_TASKS.every(t => state.todayTasks[t.id]);
     const btn = document.getElementById('mark-day-btn');
     const todayDone = state.days[day] === 'complete';
     btn.textContent = todayDone ? '✅ DAY ' + day + ' COMPLETE' : '✅ MARK DAY COMPLETE';
@@ -811,7 +809,7 @@
       </div>
     `).join('');
 
-    // Day grids
+    // Day grids - fixed literal variable mapping inside the loop string
     ['phase1','phase2','phase3'].forEach((phase, pi) => {
       const start = pi * 90 + 1;
       const end = start + 89;
@@ -825,8 +823,8 @@
           status === 'failed' ? 'failed' : '',
           isToday ? 'today' : ''
         ].filter(Boolean).join(' ');
-        const emoji = status === 'complete' ? '✓' : status === 'failed' ? '✗' : d;
-        html += `<div class="${cls}" onclick="toggleDay(${d})" title="Day ${d}">${d <= day ? (status === 'complete' ? '✓' : status === 'failed' ? '✗' : d) : ''}</div>`;
+        const displayLabel = d <= day ? (status === 'complete' ? '✓' : status === 'failed' ? '✗' : d) : '';
+        html += `<div class="${cls}" onclick="toggleDay(${d})" title="Day ${d}">${displayLabel}</div>`;
       }
       document.getElementById('grid-' + phase).innerHTML = html;
     });
