@@ -1,1040 +1,745 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-<meta name="apple-mobile-web-app-capable" content="yes">
-<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="270 GRIND">
-<title>270 GRIND</title>
-<link href="https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Space+Mono:wght@400;700&display=swap" rel="stylesheet">
-<style>
-  :root {
-    --green: #00ff88;
-    --red: #ff3b3b;
-    --gold: #ffd700;
-    --bg: #0a0a0a;
-    --card: #111111;
-    --border: #222;
-    --text: #f0f0f0;
-    --muted: #555;
-  }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#0d0d0d" />
+  <title>Checklist</title>
+  <link rel="manifest" href="manifest.json" />
+  <link rel="apple-touch-icon" href="icon-192.png" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700&display=swap" rel="stylesheet" />
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
-  * { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+    :root {
+      --bg: #0d0d0d;
+      --card: rgba(255,255,255,0.04);
+      --border: rgba(255,255,255,0.08);
+      --text: #f0f0f0;
+      --muted: rgba(240,240,240,0.4);
+      --accent-green: #2ecc71;
+      --accent-red: #e74c3c;
+      --income: #2ecc71;
+      --expense: #e74c3c;
+      --transition: 0.5s cubic-bezier(0.4,0,0.2,1);
+    }
 
-  body {
-    background: var(--bg);
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    min-height: 100vh;
-    overflow-x: hidden;
-  }
+    html, body {
+      height: 100%;
+      background: var(--bg);
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      transition: background var(--transition);
+      -webkit-font-smoothing: antialiased;
+    }
 
-  .container { max-width: 480px; margin: 0 auto; padding: 20px 16px 100px; }
+    /* ── NAV TABS ── */
+    .tab-bar {
+      display: flex;
+      border-bottom: 0.5px solid var(--border);
+      background: #0d0d0d;
+      position: sticky;
+      top: 0;
+      z-index: 100;
+    }
 
-  .header {
-    text-align: center;
-    padding: 24px 0 20px;
-    border-bottom: 1px solid var(--border);
-    margin-bottom: 24px;
-  }
+    .tab-btn {
+      flex: 1;
+      padding: 14px 0;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.14em;
+      text-transform: uppercase;
+      cursor: pointer;
+      border-bottom: 2px solid transparent;
+      transition: color 0.2s, border-color 0.2s;
+    }
 
-  .header h1 {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 64px;
-    letter-spacing: 4px;
-    line-height: 1;
-    background: linear-gradient(135deg, #fff 0%, var(--gold) 50%, #fff 100%);
-    -webkit-background-clip: text;
-    -webkit-text-fill-color: transparent;
-    background-clip: text;
-  }
+    .tab-btn.active {
+      color: var(--text);
+      border-bottom-color: var(--text);
+    }
 
-  .header .subtitle {
-    font-size: 10px;
-    color: var(--muted);
-    letter-spacing: 3px;
-    text-transform: uppercase;
-    margin-top: 6px;
-  }
+    /* ── PAGES ── */
+    .page { display: none; padding: 1.5rem 1.25rem 5rem; max-width: 480px; margin: 0 auto; }
+    .page.active { display: block; }
 
-  .stats-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 12px;
-    margin-bottom: 20px;
-  }
+    /* ── CHECKLIST PAGE ── */
+    .page-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 1.75rem;
+    }
 
-  .stat-card {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    text-align: center;
-  }
+    .app-title {
+      font-size: 22px;
+      font-weight: 700;
+      letter-spacing: -0.02em;
+    }
 
-  .stat-label { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 6px; }
-  .stat-value { font-family: 'Bebas Neue', sans-serif; font-size: 36px; letter-spacing: 2px; color: var(--gold); line-height: 1; }
-  .stat-value.green { color: var(--green); }
+    .color-toggle {
+      display: flex;
+      align-items: center;
+      gap: 7px;
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      cursor: pointer;
+      background: none;
+      border: 0.5px solid var(--border);
+      padding: 6px 12px;
+      border-radius: 20px;
+      transition: border-color 0.2s, color 0.2s;
+      text-transform: uppercase;
+    }
 
-  .progress-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
+    .color-toggle:hover { border-color: rgba(255,255,255,0.2); color: var(--text); }
 
-  .progress-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 10px; }
-  .progress-label { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
-  .progress-pct { font-family: 'Bebas Neue', sans-serif; font-size: 20px; color: var(--gold); }
-  .progress-bar { height: 6px; background: var(--border); border-radius: 3px; overflow: hidden; }
-  .progress-fill { height: 100%; background: linear-gradient(90deg, var(--green), var(--gold)); border-radius: 3px; transition: width 0.5s ease; }
+    .toggle-dot {
+      width: 7px; height: 7px;
+      border-radius: 50%;
+      background: var(--muted);
+      transition: background 0.3s;
+    }
+    .toggle-dot.on { background: var(--accent-green); }
 
-  .income-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
+    .progress-wrap {
+      height: 2px;
+      background: rgba(255,255,255,0.06);
+      border-radius: 2px;
+      margin-bottom: 1.25rem;
+      overflow: hidden;
+    }
 
-  .income-title { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
-  .income-display { font-family: 'Bebas Neue', sans-serif; font-size: 48px; color: var(--green); letter-spacing: 2px; text-align: center; margin-bottom: 12px; }
-  .income-input-row { display: flex; gap: 8px; }
+    .progress-fill {
+      height: 100%;
+      background: var(--accent-green);
+      border-radius: 2px;
+      transition: width 0.4s cubic-bezier(0.4,0,0.2,1);
+      width: 0%;
+    }
 
-  .income-input {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--border);
-    border-radius: 8px;
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    font-size: 13px;
-    padding: 10px 12px;
-    outline: none;
-  }
+    .section-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
 
-  .income-input:focus { border-color: var(--green); }
+    .section-label {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
 
-  .btn {
-    background: var(--green);
-    color: #000;
-    border: none;
-    border-radius: 8px;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    padding: 10px 14px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    transition: opacity 0.2s;
-    white-space: nowrap;
-  }
+    .tasks-card {
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+      margin-bottom: 1rem;
+    }
 
-  .btn:active { opacity: 0.7; }
-  .btn.red { background: var(--red); color: #fff; }
-  .btn.gold { background: var(--gold); color: #000; }
-  .btn.ghost { background: transparent; border: 1px solid var(--border); color: var(--muted); }
-  .btn.ghost:hover { border-color: var(--muted); color: var(--text); }
-  .btn.sm { padding: 8px 12px; font-size: 10px; }
+    .task-item {
+      display: flex;
+      align-items: center;
+      padding: 14px 16px;
+      border-bottom: 0.5px solid var(--border);
+      gap: 12px;
+      transition: background 0.15s;
+    }
 
-  .section-header-row { display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px; }
+    .task-item:last-child { border-bottom: none; }
+    .task-item:hover { background: rgba(255,255,255,0.03); }
 
-  .inline-add-form { display: flex; gap: 8px; margin-bottom: 16px; }
+    .task-check {
+      width: 20px; height: 20px;
+      border-radius: 6px;
+      border: 1.5px solid rgba(255,255,255,0.2);
+      background: none;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: border-color 0.2s, background 0.2s;
+    }
 
-  .card-section {
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
+    .task-check.checked { background: var(--accent-green); border-color: var(--accent-green); }
+    .task-check.checked::after {
+      content: '';
+      width: 5px; height: 9px;
+      border: 2px solid #000;
+      border-top: none; border-left: none;
+      transform: rotate(45deg) translateY(-1px);
+    }
 
-  .section-title { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; }
+    .task-text {
+      flex: 1;
+      font-size: 15px;
+      color: var(--text);
+      transition: color 0.2s;
+    }
 
-  .list-item {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 9px 0;
-    border-bottom: 1px solid var(--border);
-    font-size: 11px;
-    gap: 8px;
-  }
+    .task-text.done { color: var(--muted); text-decoration: line-through; }
 
-  .list-item:last-child { border-bottom: none; }
+    .task-delete {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.15);
+      cursor: pointer;
+      font-size: 20px;
+      line-height: 1;
+      padding: 2px 5px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+    .task-delete:hover { color: var(--accent-red); }
 
-  .item-interactive {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    cursor: pointer;
-    min-width: 0;
-  }
+    .add-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 1.5rem;
+    }
 
-  .item-check {
-    width: 18px;
-    height: 18px;
-    border: 1px solid var(--muted);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 10px;
-    transition: all 0.2s;
-  }
+    .add-input {
+      flex: 1;
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-family: 'Syne', sans-serif;
+      font-size: 14px;
+      padding: 10px 14px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .add-input::placeholder { color: var(--muted); }
+    .add-input:focus { border-color: rgba(255,255,255,0.25); }
 
-  .list-item.done .item-check { background: var(--green); border-color: var(--green); color: #000; }
-  .list-item.done .item-text { color: var(--muted); text-decoration: line-through; }
-  .item-text { flex: 1; color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .btn-add {
+      background: rgba(255,255,255,0.07);
+      border: 0.5px solid var(--border);
+      border-radius: 10px;
+      color: var(--text);
+      font-size: 22px;
+      width: 42px;
+      cursor: pointer;
+      display: flex; align-items: center; justify-content: center;
+      flex-shrink: 0;
+      transition: background 0.2s;
+    }
+    .btn-add:hover { background: rgba(255,255,255,0.13); }
 
-  .item-edit-input {
-    flex: 1;
-    background: var(--bg);
-    border: 1px solid var(--green);
-    border-radius: 6px;
-    color: var(--text);
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    padding: 4px 8px;
-    outline: none;
-    min-width: 0;
-  }
+    .complete-banner {
+      text-align: center;
+      padding: 10px;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.1em;
+      color: var(--accent-green);
+      text-transform: uppercase;
+      opacity: 0;
+      transition: opacity 0.4s;
+    }
+    .complete-banner.visible { opacity: 1; }
 
-  .item-actions { display: flex; gap: 4px; flex-shrink: 0; }
+    .new-day-btn {
+      width: 100%;
+      padding: 14px;
+      background: none;
+      border: 0.5px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.12em;
+      cursor: pointer;
+      text-transform: uppercase;
+      transition: border-color 0.2s, color 0.2s, background 0.2s;
+    }
+    .new-day-btn:hover { border-color: rgba(255,255,255,0.28); color: var(--text); background: rgba(255,255,255,0.03); }
 
-  .icon-btn {
-    background: transparent;
-    border: none;
-    cursor: pointer;
-    padding: 4px 6px;
-    border-radius: 4px;
-    font-size: 13px;
-    transition: opacity 0.2s;
-    opacity: 0.5;
-  }
+    /* ── BANK PAGE ── */
+    .balance-block {
+      margin-bottom: 2rem;
+    }
 
-  .icon-btn:hover { opacity: 1; }
-  .icon-btn.edit { color: var(--gold); }
-  .icon-btn.del { color: var(--red); }
-  .icon-btn.save { color: var(--green); }
+    .balance-label {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      text-transform: uppercase;
+      margin-bottom: 6px;
+    }
 
-  .check-box {
-    width: 20px;
-    height: 20px;
-    border: 1px solid var(--muted);
-    border-radius: 4px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    font-size: 11px;
-    transition: all 0.2s;
-  }
+    .balance-amount {
+      font-size: 42px;
+      font-weight: 700;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: -0.03em;
+      line-height: 1;
+    }
 
-  .checklist-item { display: flex; align-items: center; justify-content: space-between; padding: 9px 0; border-bottom: 1px solid var(--border); gap: 8px; }
-  .checklist-item:last-child { border-bottom: none; }
+    .balance-amount.positive { color: var(--income); }
+    .balance-amount.negative { color: var(--expense); }
+    .balance-amount.zero { color: var(--text); }
 
-  .checklist-interactive {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    flex: 1;
-    cursor: pointer;
-    min-width: 0;
-  }
+    .txn-form {
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 16px;
+      padding: 1.25rem;
+      margin-bottom: 1.5rem;
+    }
 
-  .checklist-item.checked .check-box { background: var(--green); border-color: var(--green); color: #000; }
-  .checklist-item.checked .check-label { color: var(--muted); text-decoration: line-through; }
-  .check-label { font-size: 12px; line-height: 1.4; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+    .form-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 10px;
+    }
 
-  .mark-day-btn { width: 100%; padding: 14px; font-size: 13px; letter-spacing: 2px; border-radius: 10px; margin-top: 16px; }
+    .form-row:last-child { margin-bottom: 0; }
 
-  .today-section {
-    background: var(--card);
-    border: 1px solid var(--green);
-    border-radius: 12px;
-    padding: 16px;
-    margin-bottom: 20px;
-  }
+    .type-toggle {
+      display: flex;
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      overflow: hidden;
+      margin-bottom: 12px;
+    }
 
-  .today-title { font-size: 9px; letter-spacing: 2px; color: var(--green); text-transform: uppercase; }
+    .type-btn {
+      flex: 1;
+      padding: 9px 0;
+      background: none;
+      border: none;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s, color 0.2s;
+    }
 
-  .projections { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
-  .proj-title { font-size: 9px; letter-spacing: 2px; color: var(--muted); text-transform: uppercase; margin-bottom: 12px; }
-  .proj-row { display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 11px; }
-  .proj-row:last-child { border-bottom: none; }
-  .proj-scenario { color: var(--muted); }
-  .proj-amount { font-family: 'Bebas Neue', sans-serif; font-size: 16px; letter-spacing: 1px; }
-  .proj-amount.low { color: #888; }
-  .proj-amount.med { color: var(--text); }
-  .proj-amount.high { color: var(--gold); }
-  .proj-amount.vhigh { color: var(--green); }
+    .type-btn.active-income { background: rgba(46,204,113,0.15); color: var(--income); }
+    .type-btn.active-expense { background: rgba(231,76,60,0.15); color: var(--expense); }
 
-  .days-section { background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 16px; margin-bottom: 20px; }
-  .day-grid { display: grid; grid-template-columns: repeat(10, 1fr); gap: 4px; margin-bottom: 16px; }
-  .day-dot {
-    aspect-ratio: 1;
-    border-radius: 3px;
-    border: 1px solid var(--border);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    font-size: 6px;
-    color: var(--muted);
-    transition: all 0.15s;
-  }
+    .field {
+      flex: 1;
+      background: rgba(255,255,255,0.05);
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 13px;
+      padding: 9px 12px;
+      outline: none;
+      transition: border-color 0.2s;
+    }
+    .field::placeholder { color: var(--muted); }
+    .field:focus { border-color: rgba(255,255,255,0.25); }
 
-  .day-dot.complete { background: var(--green); border-color: var(--green); }
-  .day-dot.failed { background: var(--red); border-color: var(--red); }
-  .day-dot.today { border-color: var(--gold); box-shadow: 0 0 6px rgba(255,215,0,0.4); }
-  .day-dot:active { transform: scale(0.85); }
+    .btn-log {
+      width: 100%;
+      padding: 11px;
+      background: rgba(255,255,255,0.07);
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--text);
+      font-family: 'DM Mono', monospace;
+      font-size: 12px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      cursor: pointer;
+      transition: background 0.2s;
+    }
+    .btn-log:hover { background: rgba(255,255,255,0.12); }
 
-  .phase-header {
-    font-family: 'Bebas Neue', sans-serif;
-    font-size: 13px;
-    letter-spacing: 2px;
-    color: var(--gold);
-    margin: 12px 0 8px;
-    padding-top: 12px;
-    border-top: 1px solid var(--border);
-  }
+    .txn-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 0.75rem;
+    }
 
-  .bottom-nav {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    background: rgba(10,10,10,0.97);
-    backdrop-filter: blur(10px);
-    border-top: 1px solid var(--border);
-    display: flex;
-    z-index: 100;
-  }
+    .print-btn {
+      background: none;
+      border: 0.5px solid var(--border);
+      border-radius: 8px;
+      color: var(--muted);
+      font-family: 'DM Mono', monospace;
+      font-size: 11px;
+      letter-spacing: 0.1em;
+      text-transform: uppercase;
+      padding: 6px 12px;
+      cursor: pointer;
+      transition: color 0.2s, border-color 0.2s;
+    }
+    .print-btn:hover { color: var(--text); border-color: rgba(255,255,255,0.25); }
 
-  .nav-btn {
-    flex: 1;
-    padding: 14px 8px;
-    background: none;
-    border: none;
-    color: var(--muted);
-    font-family: 'Space Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    cursor: pointer;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 4px;
-    transition: color 0.2s;
-  }
+    .txn-list {
+      background: var(--card);
+      border: 0.5px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
 
-  .nav-btn.active { color: var(--gold); }
-  .nav-icon { font-size: 18px; }
+    .txn-item {
+      display: flex;
+      align-items: center;
+      padding: 13px 16px;
+      border-bottom: 0.5px solid var(--border);
+      gap: 12px;
+    }
+    .txn-item:last-child { border-bottom: none; }
 
-  .view { display: none; }
-  .view.active { display: block; }
+    .txn-dot {
+      width: 8px; height: 8px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .txn-dot.income { background: var(--income); }
+    .txn-dot.expense { background: var(--expense); }
 
-  .toast {
-    position: fixed;
-    bottom: 80px;
-    left: 50%;
-    transform: translateX(-50%) translateY(20px);
-    background: var(--green);
-    color: #000;
-    font-family: 'Space Mono', monospace;
-    font-size: 11px;
-    font-weight: 700;
-    letter-spacing: 1px;
-    padding: 10px 20px;
-    border-radius: 20px;
-    opacity: 0;
-    transition: all 0.3s;
-    z-index: 200;
-    white-space: nowrap;
-  }
+    .txn-info { flex: 1; min-width: 0; }
 
-  .toast.show { opacity: 1; transform: translateX(-50%) translateY(0); }
+    .txn-source {
+      font-size: 14px;
+      font-weight: 600;
+      color: var(--text);
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
 
-  /* Nuclear reset zone */
-  .nuke-zone {
-    margin-top: 40px;
-    padding-top: 20px;
-    border-top: 1px dashed #1a1a1a;
-    text-align: right;
-  }
+    .txn-date {
+      font-size: 11px;
+      font-family: 'DM Mono', monospace;
+      color: var(--muted);
+      margin-top: 2px;
+    }
 
-  .nuke-toggle {
-    background: transparent;
-    border: none;
-    color: #1e1e1e;
-    font-family: 'Space Mono', monospace;
-    font-size: 8px;
-    letter-spacing: 1px;
-    cursor: pointer;
-    padding: 4px 8px;
-    text-transform: uppercase;
-  }
+    .txn-amount {
+      font-family: 'DM Mono', monospace;
+      font-size: 14px;
+      font-weight: 500;
+      flex-shrink: 0;
+    }
+    .txn-amount.income { color: var(--income); }
+    .txn-amount.expense { color: var(--expense); }
 
-  .nuke-toggle:hover { color: #333; }
+    .txn-del {
+      background: none;
+      border: none;
+      color: rgba(255,255,255,0.12);
+      cursor: pointer;
+      font-size: 18px;
+      padding: 2px 4px;
+      border-radius: 4px;
+      transition: color 0.2s;
+    }
+    .txn-del:hover { color: var(--expense); }
 
-  .nuke-panel {
-    display: none;
-    background: #0f0000;
-    border: 1px solid #330000;
-    border-radius: 10px;
-    padding: 14px;
-    margin-top: 8px;
-    text-align: left;
-  }
+    .empty-state {
+      text-align: center;
+      padding: 2.5rem 1rem;
+      font-size: 12px;
+      font-family: 'DM Mono', monospace;
+      letter-spacing: 0.1em;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
 
-  .nuke-panel.visible { display: block; }
-
-  .nuke-title { font-size: 9px; letter-spacing: 2px; color: #661111; text-transform: uppercase; margin-bottom: 10px; }
-
-  .nuke-row { display: flex; gap: 8px; align-items: center; margin-bottom: 10px; }
-
-  .nuke-input {
-    flex: 1;
-    background: #0a0000;
-    border: 1px solid #330000;
-    border-radius: 6px;
-    color: #ff6666;
-    font-family: 'Space Mono', monospace;
-    font-size: 12px;
-    padding: 8px 10px;
-    outline: none;
-  }
-
-  .nuke-input:focus { border-color: var(--red); }
-
-  .nuke-btn {
-    background: #1a0000;
-    border: 1px solid var(--red);
-    color: var(--red);
-    border-radius: 6px;
-    font-family: 'Space Mono', monospace;
-    font-size: 9px;
-    font-weight: 700;
-    padding: 8px 10px;
-    cursor: pointer;
-    letter-spacing: 1px;
-    text-transform: uppercase;
-    white-space: nowrap;
-  }
-
-  .nuke-btn:hover { background: #330000; }
-  .nuke-note { font-size: 9px; color: #441111; letter-spacing: 1px; }
-
-  /* Overlay modal */
-  .modal-overlay {
-    display: none;
-    position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,0.85);
-    z-index: 300;
-    align-items: center;
-    justify-content: center;
-  }
-
-  .modal-overlay.open { display: flex; }
-
-  .modal-box {
-    background: #0f0000;
-    border: 1px solid var(--red);
-    border-radius: 14px;
-    padding: 24px;
-    max-width: 320px;
-    width: 90%;
-    text-align: center;
-  }
-
-  .modal-title { font-family: 'Bebas Neue', sans-serif; font-size: 28px; color: var(--red); letter-spacing: 2px; margin-bottom: 8px; }
-  .modal-msg { font-size: 11px; color: #cc4444; line-height: 1.6; margin-bottom: 20px; }
-  .modal-btns { display: flex; gap: 10px; }
-  .modal-btns button { flex: 1; }
-</style>
+    /* ── PRINT STYLES ── */
+    @media print {
+      .tab-bar, .txn-form, .txn-header .print-btn, .txn-del, .new-day-btn, .add-row, .color-toggle { display: none !important; }
+      body { background: #fff !important; color: #000 !important; }
+      .page { display: block !important; }
+      #page-checklist { display: none !important; }
+      .balance-amount { color: #000 !important; }
+      .txn-amount.income { color: #1a6b3c !important; }
+      .txn-amount.expense { color: #a32d2d !important; }
+      .txn-source, .txn-date { color: #000 !important; }
+    }
+  </style>
 </head>
 <body>
 
-<div class="container">
-
-  <!-- HOME VIEW -->
-  <div class="view active" id="view-home">
-    <div class="header">
-      <h1>270 GRIND</h1>
-      <div class="subtitle" id="start-date-label">FAF Empire</div>
-    </div>
-
-    <div class="stats-row">
-      <div class="stat-card">
-        <div class="stat-label">Current Day</div>
-        <div class="stat-value" id="current-day-stat">1</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Days Left</div>
-        <div class="stat-value" id="days-left-stat">270</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Streak 🔥</div>
-        <div class="stat-value green" id="streak-stat">0</div>
-      </div>
-      <div class="stat-card">
-        <div class="stat-label">Completed</div>
-        <div class="stat-value green" id="completed-stat">0</div>
-      </div>
-    </div>
-
-    <div class="progress-section">
-      <div class="progress-header">
-        <span class="progress-label">270-Day Journey</span>
-        <span class="progress-pct" id="progress-pct">0%</span>
-      </div>
-      <div class="progress-bar">
-        <div class="progress-fill" id="progress-fill" style="width:0%"></div>
-      </div>
-    </div>
-
-    <div class="income-section">
-      <div class="income-title">Total Earned 💰</div>
-      <div class="income-display" id="income-display">$0</div>
-      <div class="income-input-row">
-        <input class="income-input" id="income-input" type="number" placeholder="Add $ earned..." inputmode="decimal">
-        <button class="btn" onclick="addIncome()">ADD</button>
-        <button class="btn red" onclick="setIncome()">SET</button>
-      </div>
-    </div>
-
-    <!-- MILESTONES -->
-    <div class="card-section">
-      <div class="section-header-row">
-        <div class="section-title">Milestones 🎯</div>
-      </div>
-      <div class="inline-add-form">
-        <input class="income-input" id="milestone-new-text" type="text" placeholder="Add new milestone...">
-        <button class="btn sm" onclick="addNewMilestone()">+ ADD</button>
-      </div>
-      <div id="milestones-list"></div>
-    </div>
-
-    <!-- NUKE ZONE -->
-    <div class="nuke-zone">
-      <button class="nuke-toggle" onclick="toggleNuke()">⚙ system</button>
-      <div class="nuke-panel" id="nuke-panel">
-        <div class="nuke-title">⚠ Reset Everything</div>
-        <div class="nuke-row">
-          <input class="nuke-input" id="reset-date-input" type="date" title="New start date">
-          <button class="nuke-btn" onclick="confirmNuke()">NUKE & RESET</button>
-        </div>
-        <div class="nuke-note">Sets a new start date and wipes all data. Cannot be undone.</div>
-      </div>
-    </div>
-  </div>
-
-  <!-- TODAY VIEW -->
-  <div class="view" id="view-today">
-    <div class="header">
-      <h1 id="today-day-header">DAY 1</h1>
-      <div class="subtitle" id="today-phase-label">GRIND PHASE · Days 1–90</div>
-    </div>
-
-    <div class="today-section">
-      <div class="section-header-row">
-        <div class="today-title">Daily Checklist ✓</div>
-      </div>
-      <div class="inline-add-form">
-        <input class="income-input" id="task-new-text" type="text" placeholder="Add new task...">
-        <button class="btn sm" onclick="addNewTask()">+ ADD</button>
-      </div>
-      <div id="daily-checklist"></div>
-      <button class="btn mark-day-btn" id="mark-day-btn" onclick="markToday()">✅ MARK DAY COMPLETE</button>
-    </div>
-
-    <div class="projections">
-      <div class="proj-title">270-Day Income Projections</div>
-      <div class="proj-row">
-        <span class="proj-scenario">🔴 Low (slow growth)</span>
-        <span class="proj-amount low">$6K–$12K</span>
-      </div>
-      <div class="proj-row">
-        <span class="proj-scenario">🟡 Medium (consistent)</span>
-        <span class="proj-amount med">$36K–$60K</span>
-      </div>
-      <div class="proj-row">
-        <span class="proj-scenario">🟠 High (FAF pops)</span>
-        <span class="proj-amount high">$120K–$240K</span>
-      </div>
-      <div class="proj-row">
-        <span class="proj-scenario">🟢 Very High (viral)</span>
-        <span class="proj-amount vhigh">$600K+</span>
-      </div>
-    </div>
-  </div>
-
-  <!-- DAYS VIEW -->
-  <div class="view" id="view-days">
-    <div class="header">
-      <h1>ALL DAYS</h1>
-      <div class="subtitle">Tap a day to toggle ✅ / ❌</div>
-    </div>
-
-    <div class="days-section">
-      <div class="phase-header">⚡ PHASE 1 — GRIND (Days 1–90)</div>
-      <div class="day-grid" id="grid-phase1"></div>
-      <div class="phase-header">📈 PHASE 2 — GROWTH (Days 91–180)</div>
-      <div class="day-grid" id="grid-phase2"></div>
-      <div class="phase-header">🚀 PHASE 3 — SCALE (Days 181–270)</div>
-      <div class="day-grid" id="grid-phase3"></div>
-    </div>
-  </div>
-
+<div class="tab-bar">
+  <button class="tab-btn active" id="tab-checklist" onclick="switchTab('checklist')">Checklist</button>
+  <button class="tab-btn" id="tab-bank" onclick="switchTab('bank')">Bank</button>
 </div>
 
-<!-- Bottom nav -->
-<div class="bottom-nav">
-  <button class="nav-btn active" onclick="showView('home')" id="nav-home">
-    <span class="nav-icon">🏠</span>HOME
-  </button>
-  <button class="nav-btn" onclick="showView('today')" id="nav-today">
-    <span class="nav-icon">⚡</span>TODAY
-  </button>
-  <button class="nav-btn" onclick="showView('days')" id="nav-days">
-    <span class="nav-icon">📅</span>DAYS
-  </button>
+<!-- CHECKLIST PAGE -->
+<div class="page active" id="page-checklist">
+  <div class="page-header">
+    <span class="app-title">Checklist</span>
+    <button class="color-toggle" onclick="toggleColor()">
+      <span class="toggle-dot" id="toggleDot"></span>
+      <span id="toggleLabel">Color off</span>
+    </button>
+  </div>
+
+  <div class="progress-wrap">
+    <div class="progress-fill" id="progressBar"></div>
+  </div>
+
+  <div class="section-row">
+    <span class="section-label">Tasks</span>
+    <span class="section-label" id="progressText">0 / 0</span>
+  </div>
+
+  <div class="tasks-card" id="taskList"></div>
+
+  <div class="add-row" style="margin-top:10px;">
+    <input class="add-input" id="addInput" placeholder="Add a task..." onkeydown="if(event.key==='Enter')addTask()" />
+    <button class="btn-add" onclick="addTask()">+</button>
+  </div>
+
+  <div class="complete-banner" id="completeBanner">Complete — You can relax now</div>
+
+  <button class="new-day-btn" onclick="newDay()">↺ &nbsp;Start New Day</button>
 </div>
 
-<div class="toast" id="toast"></div>
-
-<!-- Nuke confirmation modal -->
-<div class="modal-overlay" id="nuke-modal">
-  <div class="modal-box">
-    <div class="modal-title">⚠ NUKE?</div>
-    <div class="modal-msg">This will erase ALL data — days, income, tasks, milestones — and restart from the date you picked. There is no undo.</div>
-    <div class="modal-btns">
-      <button class="btn ghost" onclick="closeModal()">CANCEL</button>
-      <button class="btn red" onclick="executeNuke()">YES, NUKE IT</button>
-    </div>
+<!-- BANK PAGE -->
+<div class="page" id="page-bank">
+  <div class="balance-block">
+    <div class="balance-label">Balance</div>
+    <div class="balance-amount" id="balanceDisplay">$0.00</div>
   </div>
+
+  <div class="txn-form">
+    <div class="type-toggle">
+      <button class="type-btn active-income" id="btn-income" onclick="setType('income')">+ Income</button>
+      <button class="type-btn" id="btn-expense" onclick="setType('expense')">− Expense</button>
+    </div>
+    <div class="form-row">
+      <input class="field" id="txnAmount" type="number" placeholder="Amount" min="0" step="0.01" />
+    </div>
+    <div class="form-row">
+      <input class="field" id="txnSource" type="text" placeholder="Source (e.g. FilesAndFootage, rent)" />
+    </div>
+    <div class="form-row">
+      <input class="field" id="txnNote" type="text" placeholder="Note (optional)" />
+    </div>
+    <button class="btn-log" onclick="logTxn()">Log Transaction</button>
+  </div>
+
+  <div class="txn-header">
+    <span class="section-label">Transactions</span>
+    <button class="print-btn" onclick="window.print()">Print for taxes</button>
+  </div>
+
+  <div class="txn-list" id="txnList"></div>
 </div>
 
 <script>
-  const TOTAL_DAYS = 270;
+  // ── STATE ──
+  let tasks = JSON.parse(localStorage.getItem('cl_tasks') || 'null');
+  let colorOn = localStorage.getItem('cl_color') === 'true';
+  let txns = JSON.parse(localStorage.getItem('cl_txns') || '[]');
+  let txnType = 'income';
 
-  const DEFAULT_MILESTONES = [
-    { id: 'm_1', text: '📁 10 FOIA requests filed' },
-    { id: 'm_2', text: '📁 100 FOIA requests filed' },
-    { id: 'm_3', text: '🎬 First FAF video uploaded' },
-    { id: 'm_4', text: '👥 100 subscribers' },
-    { id: 'm_5', text: '👥 500 subscribers' },
-    { id: 'm_6', text: '👥 1,000 subscribers' },
-    { id: 'm_7', text: '⏱️ 4,000 watch hours hit' },
-    { id: 'm_8', text: '💳 AdSense application submitted' },
-    { id: 'm_9', text: '💵 First $100 earned' },
-    { id: 'm_10', text: '💰 First $1,000 month' },
-    { id: 'm_11', text: '💰 First $5,000 month' },
-    { id: 'm_12', text: '📋 Nevada LLC formed' },
-    { id: 'm_13', text: '🏦 $20,000 saved' },
-    { id: 'm_14', text: '🏠 Moved to Henderson, NV' }
-  ];
-
-  const DEFAULT_TASKS = [
-    { id: 't_1', text: '10 FOIA requests filed' },
-    { id: 't_2', text: 'Swing trading study (1–2 hrs + notes)' },
-    { id: 't_3', text: 'FAF editing/production work' },
-    { id: 't_4', text: 'Analytics & content optimization' },
-    { id: 't_5', text: 'Relaxed ONLY after all work done' }
-  ];
-
-  // Default start = today at midnight
-  function todayMidnight() {
-    const d = new Date();
-    d.setHours(0,0,0,0);
-    return d.getTime();
+  if (!tasks) {
+    tasks = [
+      { id: 1, text: 'Film video', done: false },
+      { id: 2, text: 'Edit and upload', done: false },
+      { id: 3, text: 'Send FOIA requests', done: false },
+      { id: 4, text: 'Study trading', done: false },
+    ];
   }
 
-  let pendingNukeDate = null;
+  function save() {
+    localStorage.setItem('cl_tasks', JSON.stringify(tasks));
+    localStorage.setItem('cl_color', colorOn);
+    localStorage.setItem('cl_txns', JSON.stringify(txns));
+  }
 
-  let state = {
-    startTs: todayMidnight(),
-    days: {},
-    income: 0,
-    milestonesList: JSON.parse(JSON.stringify(DEFAULT_MILESTONES)),
-    dailyTasksList: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
-    milestones: {},
-    todayTasks: {},
-    todayTasksDate: null
-  };
+  // ── TAB SWITCHING ──
+  function switchTab(tab) {
+    document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+    document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+    document.getElementById('page-' + tab).classList.add('active');
+    document.getElementById('tab-' + tab).classList.add('active');
+  }
 
-  function save() { localStorage.setItem('grind270_v4', JSON.stringify(state)); }
+  // ── CHECKLIST ──
+  function renderTasks() {
+    const list = document.getElementById('taskList');
+    list.innerHTML = '';
 
-  function load() {
-    const raw = localStorage.getItem('grind270_v4');
-    if (raw) {
-      try { state = { ...state, ...JSON.parse(raw) }; } catch(e) {}
+    tasks.forEach(t => {
+      const row = document.createElement('div');
+      row.className = 'task-item';
+
+      const check = document.createElement('div');
+      check.className = 'task-check' + (t.done ? ' checked' : '');
+      check.onclick = () => toggleTask(t.id);
+
+      const text = document.createElement('span');
+      text.className = 'task-text' + (t.done ? ' done' : '');
+      text.textContent = t.text;
+
+      const del = document.createElement('button');
+      del.className = 'task-delete';
+      del.innerHTML = '&times;';
+      del.onclick = () => deleteTask(t.id);
+
+      row.appendChild(check);
+      row.appendChild(text);
+      row.appendChild(del);
+      list.appendChild(row);
+    });
+
+    const total = tasks.length;
+    const done = tasks.filter(t => t.done).length;
+    const pct = total === 0 ? 0 : Math.round((done / total) * 100);
+
+    document.getElementById('progressBar').style.width = pct + '%';
+    document.getElementById('progressText').textContent = done + ' / ' + total;
+
+    const allDone = total > 0 && done === total;
+    document.getElementById('completeBanner').className = 'complete-banner' + (allDone ? ' visible' : '');
+
+    if (colorOn) {
+      document.body.style.background = allDone ? '#051209' : '#1a0302';
+      document.getElementById('progressBar').style.background = allDone ? '#2ecc71' : '#e74c3c';
+    } else {
+      document.body.style.background = '#0d0d0d';
+      document.getElementById('progressBar').style.background = '#2ecc71';
     }
+
+    document.getElementById('toggleDot').className = 'toggle-dot' + (colorOn ? ' on' : '');
+    document.getElementById('toggleLabel').textContent = colorOn ? 'Color on' : 'Color off';
   }
 
-  function getStartDate() {
-    return new Date(state.startTs);
-  }
-
-  function getCurrentDay() {
-    const now = new Date();
-    now.setHours(0,0,0,0);
-    const start = getStartDate();
-    const diff = Math.floor((now - start) / 86400000) + 1;
-    return Math.max(1, Math.min(diff, TOTAL_DAYS));
-  }
-
-  function formatMoney(n) {
-    if (n >= 1000000) return '$' + (n/1000000).toFixed(1) + 'M';
-    if (n >= 1000) return '$' + (n/1000).toFixed(1) + 'K';
-    return '$' + n.toLocaleString();
-  }
-
-  function showToast(msg) {
-    const t = document.getElementById('toast');
-    t.textContent = msg;
-    t.classList.add('show');
-    setTimeout(() => t.classList.remove('show'), 2200);
-  }
-
-  function showView(name) {
-    document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
-    document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
-    document.getElementById('view-' + name).classList.add('active');
-    document.getElementById('nav-' + name).classList.add('active');
-  }
-
-  function addIncome() {
-    const val = parseFloat(document.getElementById('income-input').value);
-    if (isNaN(val) || val <= 0) return;
-    state.income += val;
-    document.getElementById('income-input').value = '';
-    save(); render();
-    showToast('+ ' + formatMoney(val) + ' added 💰');
-  }
-
-  function setIncome() {
-    const val = parseFloat(document.getElementById('income-input').value);
-    if (isNaN(val) || val < 0) return;
-    state.income = val;
-    document.getElementById('income-input').value = '';
-    save(); render();
-    showToast('Income set to ' + formatMoney(val));
-  }
-
-  // ---- MILESTONES ----
-  function addNewMilestone() {
-    const txt = document.getElementById('milestone-new-text').value.trim();
-    if (!txt) return;
-    state.milestonesList.push({ id: 'm_' + Date.now(), text: txt });
-    document.getElementById('milestone-new-text').value = '';
-    save(); render();
-    showToast('Milestone added');
-  }
-
-  function deleteMilestone(id) {
-    state.milestonesList = state.milestonesList.filter(m => m.id !== id);
-    delete state.milestones[id];
-    save(); render();
-    showToast('Milestone removed');
-  }
-
-  function toggleMilestone(id) {
-    state.milestones[id] = !state.milestones[id];
-    save(); render();
-    if (state.milestones[id]) showToast('Milestone unlocked! 🎯');
-  }
-
-  let editingMilestone = null;
-
-  function startEditMilestone(id) {
-    editingMilestone = id;
-    render();
-    const input = document.getElementById('medit_' + id);
-    if (input) { input.focus(); input.select(); }
-  }
-
-  function saveEditMilestone(id) {
-    const input = document.getElementById('medit_' + id);
-    if (!input) return;
-    const txt = input.value.trim();
-    if (txt) {
-      const m = state.milestonesList.find(x => x.id === id);
-      if (m) m.text = txt;
-    }
-    editingMilestone = null;
-    save(); render();
-  }
-
-  function cancelEditMilestone() {
-    editingMilestone = null;
-    render();
-  }
-
-  // ---- TASKS ----
-  function addNewTask() {
-    const txt = document.getElementById('task-new-text').value.trim();
-    if (!txt) return;
-    state.dailyTasksList.push({ id: 't_' + Date.now(), text: txt });
-    document.getElementById('task-new-text').value = '';
-    save(); render();
-    showToast('Task added');
+  function toggleTask(id) {
+    tasks = tasks.map(t => t.id === id ? { ...t, done: !t.done } : t);
+    save(); renderTasks();
   }
 
   function deleteTask(id) {
-    state.dailyTasksList = state.dailyTasksList.filter(t => t.id !== id);
-    delete state.todayTasks[id];
-    save(); render();
-    showToast('Task removed');
+    tasks = tasks.filter(t => t.id !== id);
+    save(); renderTasks();
   }
 
-  function toggleTask(taskId) {
-    const today = new Date().toDateString();
-    if (state.todayTasksDate !== today) { state.todayTasks = {}; state.todayTasksDate = today; }
-    state.todayTasks[taskId] = !state.todayTasks[taskId];
-    save(); render();
+  function addTask() {
+    const input = document.getElementById('addInput');
+    const text = input.value.trim();
+    if (!text) return;
+    tasks.push({ id: Date.now(), text, done: false });
+    input.value = '';
+    save(); renderTasks();
   }
 
-  let editingTask = null;
-
-  function startEditTask(id) {
-    editingTask = id;
-    render();
-    const input = document.getElementById('tedit_' + id);
-    if (input) { input.focus(); input.select(); }
+  function newDay() {
+    tasks = tasks.map(t => ({ ...t, done: false }));
+    save(); renderTasks();
   }
 
-  function saveEditTask(id) {
-    const input = document.getElementById('tedit_' + id);
-    if (!input) return;
-    const txt = input.value.trim();
-    if (txt) {
-      const t = state.dailyTasksList.find(x => x.id === id);
-      if (t) t.text = txt;
-    }
-    editingTask = null;
-    save(); render();
+  function toggleColor() {
+    colorOn = !colorOn;
+    save(); renderTasks();
   }
 
-  function cancelEditTask() {
-    editingTask = null;
-    render();
+  // ── BANK ──
+  function setType(type) {
+    txnType = type;
+    document.getElementById('btn-income').className = 'type-btn' + (type === 'income' ? ' active-income' : '');
+    document.getElementById('btn-expense').className = 'type-btn' + (type === 'expense' ? ' active-expense' : '');
   }
 
-  // ---- DAYS ----
-  function toggleDay(dayNum) {
-    const cur = state.days[dayNum];
-    if (cur === 'complete') state.days[dayNum] = 'failed';
-    else if (cur === 'failed') state.days[dayNum] = null;
-    else state.days[dayNum] = 'complete';
-    save(); render();
+  function getBalance() {
+    return txns.reduce((sum, t) => {
+      return sum + (t.type === 'income' ? t.amount : -t.amount);
+    }, 0);
   }
 
-  function markToday() {
-    const day = getCurrentDay();
-    state.days[day] = 'complete';
-    state.todayTasks = {};
-    save(); render();
-    showToast('Day ' + day + ' locked in ✅');
+  function logTxn() {
+    const amountRaw = parseFloat(document.getElementById('txnAmount').value);
+    const source = document.getElementById('txnSource').value.trim();
+    const note = document.getElementById('txnNote').value.trim();
+
+    if (isNaN(amountRaw) || amountRaw <= 0 || !source) return;
+
+    const amount = Math.round(amountRaw * 100) / 100;
+
+    txns.unshift({
+      id: Date.now(),
+      type: txnType,
+      amount,
+      source,
+      note,
+      date: new Date().toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })
+    });
+
+    document.getElementById('txnAmount').value = '';
+    document.getElementById('txnSource').value = '';
+    document.getElementById('txnNote').value = '';
+
+    save(); renderBank();
   }
 
-  function calcStreak() {
-    let streak = 0;
-    const day = getCurrentDay();
-    for (let i = day; i >= 1; i--) {
-      if (state.days[i] === 'complete') streak++;
-      else break;
-    }
-    return streak;
+  function deleteTxn(id) {
+    txns = txns.filter(t => t.id !== id);
+    save(); renderBank();
   }
 
-  // ---- NUKE ----
-  function toggleNuke() {
-    document.getElementById('nuke-panel').classList.toggle('visible');
-  }
+  function renderBank() {
+    const balance = getBalance();
+    const display = document.getElementById('balanceDisplay');
+    display.textContent = '$' + Math.abs(balance).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+    display.className = 'balance-amount ' + (balance > 0 ? 'positive' : balance < 0 ? 'negative' : 'zero');
+    if (balance < 0) display.textContent = '-' + display.textContent;
 
-  function confirmNuke() {
-    const dateVal = document.getElementById('reset-date-input').value;
-    if (!dateVal) { showToast('Pick a start date first'); return; }
-    const parts = dateVal.split('-');
-    const d = new Date(parseInt(parts[0]), parseInt(parts[1])-1, parseInt(parts[2]));
-    d.setHours(0,0,0,0);
-    pendingNukeDate = d.getTime();
-    document.getElementById('nuke-modal').classList.add('open');
-  }
+    const list = document.getElementById('txnList');
+    list.innerHTML = '';
 
-  function closeModal() {
-    document.getElementById('nuke-modal').classList.remove('open');
-    pendingNukeDate = null;
-  }
-
-  function executeNuke() {
-    if (!pendingNukeDate) return;
-    state = {
-      startTs: pendingNukeDate,
-      days: {},
-      income: 0,
-      milestonesList: JSON.parse(JSON.stringify(DEFAULT_MILESTONES)),
-      dailyTasksList: JSON.parse(JSON.stringify(DEFAULT_TASKS)),
-      milestones: {},
-      todayTasks: {},
-      todayTasksDate: null
-    };
-    pendingNukeDate = null;
-    closeModal();
-    document.getElementById('nuke-panel').classList.remove('visible');
-    save(); render();
-    showToast('Reset complete. Day 1 starts fresh.');
-  }
-
-  // ---- RENDER ----
-  function render() {
-    const day = getCurrentDay();
-    const completed = Object.values(state.days).filter(v => v === 'complete').length;
-    const streak = calcStreak();
-    const pct = Math.round((completed / TOTAL_DAYS) * 100);
-
-    const start = getStartDate();
-    const opts = { month: 'short', day: 'numeric', year: 'numeric' };
-    document.getElementById('start-date-label').textContent = 'FAF Empire · Started ' + start.toLocaleDateString('en-US', opts);
-
-    document.getElementById('current-day-stat').textContent = day;
-    document.getElementById('days-left-stat').textContent = Math.max(0, TOTAL_DAYS - day + 1);
-    document.getElementById('streak-stat').textContent = streak;
-    document.getElementById('completed-stat').textContent = completed;
-    document.getElementById('progress-pct').textContent = pct + '%';
-    document.getElementById('progress-fill').style.width = pct + '%';
-    document.getElementById('income-display').textContent = formatMoney(state.income);
-
-    document.getElementById('today-day-header').textContent = 'DAY ' + day;
-    const phase = day <= 90 ? 'GRIND PHASE · Days 1–90 · 10 hrs/day' :
-                  day <= 180 ? 'GROWTH PHASE · Days 91–180 · 8 hrs/day' :
-                  'SCALE PHASE · Days 181–270 · 8 hrs/day';
-    document.getElementById('today-phase-label').textContent = phase;
-
-    // Today checklist
-    const todayStr = new Date().toDateString();
-    if (state.todayTasksDate !== todayStr) state.todayTasks = {};
-    const cl = document.getElementById('daily-checklist');
-
-    if (state.dailyTasksList.length === 0) {
-      cl.innerHTML = `<div style="font-size:11px;color:var(--muted);text-align:center;padding:12px 0">No tasks yet. Add one above.</div>`;
-    } else {
-      cl.innerHTML = state.dailyTasksList.map(t => {
-        const isEditing = editingTask === t.id;
-        const isChecked = !!state.todayTasks[t.id];
-        if (isEditing) {
-          return `
-            <div class="checklist-item">
-              <input class="item-edit-input" id="tedit_${t.id}" value="${escHtml(t.text)}" onkeydown="if(event.key==='Enter')saveEditTask('${t.id}');if(event.key==='Escape')cancelEditTask()">
-              <div class="item-actions">
-                <button class="icon-btn save" onclick="saveEditTask('${t.id}')">✓</button>
-                <button class="icon-btn del" onclick="cancelEditTask()">✕</button>
-              </div>
-            </div>`;
-        }
-        return `
-          <div class="checklist-item ${isChecked ? 'checked' : ''}">
-            <div class="checklist-interactive" onclick="toggleTask('${t.id}')">
-              <div class="check-box">${isChecked ? '✓' : ''}</div>
-              <div class="check-label">${escHtml(t.text)}</div>
-            </div>
-            <div class="item-actions">
-              <button class="icon-btn edit" onclick="startEditTask('${t.id}')">✎</button>
-              <button class="icon-btn del" onclick="deleteTask('${t.id}')">✕</button>
-            </div>
-          </div>`;
-      }).join('');
+    if (txns.length === 0) {
+      list.innerHTML = '<div class="empty-state">No transactions yet</div>';
+      return;
     }
 
-    const btn = document.getElementById('mark-day-btn');
-    const todayDone = state.days[day] === 'complete';
-    btn.textContent = todayDone ? '✅ DAY ' + day + ' COMPLETE' : '✅ MARK DAY COMPLETE';
-    btn.style.opacity = todayDone ? '0.5' : '1';
+    txns.forEach(t => {
+      const row = document.createElement('div');
+      row.className = 'txn-item';
 
-    // Milestones
-    const mlContainer = document.getElementById('milestones-list');
-    if (state.milestonesList.length === 0) {
-      mlContainer.innerHTML = `<div style="font-size:11px;color:var(--muted);text-align:center;padding:12px 0">No milestones. Add one above.</div>`;
-    } else {
-      mlContainer.innerHTML = state.milestonesList.map(m => {
-        const isEditing = editingMilestone === m.id;
-        const isDone = !!state.milestones[m.id];
-        if (isEditing) {
-          return `
-            <div class="list-item">
-              <input class="item-edit-input" id="medit_${m.id}" value="${escHtml(m.text)}" onkeydown="if(event.key==='Enter')saveEditMilestone('${m.id}');if(event.key==='Escape')cancelEditMilestone()">
-              <div class="item-actions">
-                <button class="icon-btn save" onclick="saveEditMilestone('${m.id}')">✓</button>
-                <button class="icon-btn del" onclick="cancelEditMilestone()">✕</button>
-              </div>
-            </div>`;
-        }
-        return `
-          <div class="list-item ${isDone ? 'done' : ''}">
-            <div class="item-interactive" onclick="toggleMilestone('${m.id}')">
-              <div class="item-check">${isDone ? '✓' : ''}</div>
-              <div class="item-text">${escHtml(m.text)}</div>
-            </div>
-            <div class="item-actions">
-              <button class="icon-btn edit" onclick="startEditMilestone('${m.id}')">✎</button>
-              <button class="icon-btn del" onclick="deleteMilestone('${m.id}')">✕</button>
-            </div>
-          </div>`;
-      }).join('');
-    }
+      const dot = document.createElement('div');
+      dot.className = 'txn-dot ' + t.type;
 
-    // Day grids
-    ['phase1','phase2','phase3'].forEach((ph, pi) => {
-      const start = pi * 90 + 1;
-      const end = start + 89;
-      let html = '';
-      for (let d = start; d <= end; d++) {
-        const status = state.days[d];
-        const isToday = d === day;
-        const cls = ['day-dot', status === 'complete' ? 'complete' : '', status === 'failed' ? 'failed' : '', isToday ? 'today' : ''].filter(Boolean).join(' ');
-        const lbl = d <= day ? (status === 'complete' ? '✓' : status === 'failed' ? '✗' : d) : '';
-        html += `<div class="${cls}" onclick="toggleDay(${d})" title="Day ${d}">${lbl}</div>`;
-      }
-      document.getElementById('grid-' + ph).innerHTML = html;
+      const info = document.createElement('div');
+      info.className = 'txn-info';
+      info.innerHTML = `<div class="txn-source">${t.source}${t.note ? ' — ' + t.note : ''}</div><div class="txn-date">${t.date}</div>`;
+
+      const amt = document.createElement('div');
+      amt.className = 'txn-amount ' + t.type;
+      amt.textContent = (t.type === 'income' ? '+' : '-') + '$' + t.amount.toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+
+      const del = document.createElement('button');
+      del.className = 'txn-del';
+      del.innerHTML = '&times;';
+      del.onclick = () => deleteTxn(t.id);
+
+      row.appendChild(dot);
+      row.appendChild(info);
+      row.appendChild(amt);
+      row.appendChild(del);
+      list.appendChild(row);
     });
   }
 
-  function escHtml(str) {
-    return String(str).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
-  }
-
-  // Set today's date as default for reset input
-  function initDateInput() {
-    const d = new Date();
-    const y = d.getFullYear();
-    const m = String(d.getMonth()+1).padStart(2,'0');
-    const day = String(d.getDate()).padStart(2,'0');
-    document.getElementById('reset-date-input').value = `${y}-${m}-${day}`;
-  }
-
-  // Auto-advance day at midnight
-  function scheduleMidnightCheck() {
-    const now = new Date();
-    const msUntilMidnight = new Date(now.getFullYear(), now.getMonth(), now.getDate()+1, 0, 0, 0) - now;
-    setTimeout(() => {
-      render();
-      scheduleMidnightCheck();
-    }, msUntilMidnight + 100);
-  }
-
-  load();
-  initDateInput();
-  render();
-  scheduleMidnightCheck();
+  renderTasks();
+  renderBank();
 </script>
 </body>
 </html>
